@@ -1,6 +1,6 @@
 # SolarIntel - Solar Energy Generation Prediction
 
-An end-to-end machine learning system that forecasts hourly solar energy output across 29 European countries. The pipeline fuses 15 years of solar capacity factor data from the European Commission's EMHIRES dataset with hourly meteorological observations from NASA's POWER API, trains two regression models, and serves predictions through an interactive web application.
+An end-to-end machine learning and agentic AI system that forecasts hourly solar energy output across 29 European countries. The pipeline fuses 15 years of solar capacity factor data from the European Commission's EMHIRES dataset with hourly meteorological observations from NASA's POWER API, trains two regression models, and serves predictions through an interactive web application with an AI-powered grid advisory layer.
 
 > **Live Demo:** [huggingface.co/spaces/priyanshutomar2024/SolarIntel](https://huggingface.co/spaces/priyanshutomar2024/SolarIntel)
 
@@ -13,7 +13,8 @@ An end-to-end machine learning system that forecasts hourly solar energy output 
 | **Coverage** | 29 European countries, 2001 - 2015, hourly resolution |
 | **Dataset** | ~3.8 million rows, 34 features |
 | **Models** | Linear Regression (R2 = 0.788) and Random Forest Regressor (R2 = 0.911) |
-| **Stack** | Python, pandas, scikit-learn, matplotlib, seaborn, Streamlit |
+| **Agent** | 4-node LangGraph pipeline with RAG, risk analysis, and LLM recommendations |
+| **Stack** | Python, pandas, scikit-learn, LangGraph, LangChain, Chroma, Streamlit |
 | **Deployment** | Hugging Face Spaces (Streamlit) |
 
 ---
@@ -36,7 +37,11 @@ If you are new to this project, start with the **Walkthrough** folder. It contai
 |-------|------------|
 | Data Processing | pandas, NumPy |
 | Machine Learning | scikit-learn (Linear Regression, Random Forest Regressor) |
-| Visualisation | matplotlib, seaborn |
+| Agentic AI | LangGraph, LangChain, LangChain-OpenAI |
+| LLM | OpenRouter (openrouter/free — automatic free model routing) |
+| Vector Store | Chroma + sentence-transformers/all-MiniLM-L6-v2 (local embeddings) |
+| Weather Forecast | Open-Meteo API (free, no key required, up to 15 days ahead) |
+| Visualisation | matplotlib, seaborn, Plotly |
 | Model Persistence | joblib |
 | Web Application | Streamlit |
 | Data Source | NASA POWER API, EMHIRES PV (JRC) |
@@ -48,6 +53,7 @@ If you are new to this project, start with the **Walkthrough** folder. It contai
 
 ```
 EMHIRES-NASA-SolarPrediction/
+├── Agent_Pipeline/           # Agentic AI layer (Milestone 2)
 ├── Walkthrough/              # Start here - full documented walkthrough
 ├── Pipeline_Modules/         # Modular per-stage scripts
 ├── Final_Pipeline/           # Single-script end-to-end pipeline
@@ -56,6 +62,37 @@ EMHIRES-NASA-SolarPrediction/
 ├── Models/                   # Trained model files (zipped)
 ├── Demo_and_Hosting/         # Streamlit app for deployment
 └── Report/                   # Project report (LaTeX + PDF)
+```
+
+### Agent_Pipeline/
+
+A 4-node LangGraph pipeline that sits on top of the ML models and provides AI-driven grid management recommendations.
+
+```
+Agent_Pipeline/
+├── state.py                  # GridAdvisorState TypedDict
+├── graph.py                  # LangGraph StateGraph wiring
+├── model_loader.py           # RFR model loader and feature builder
+├── run_agent.py              # CLI entry point
+├── 1_forecast/               # Node 1: fetches Open-Meteo weather, builds 24h CF profile
+├── 2_risk/                   # Node 2: variability scoring and risk flag generation
+├── 3_rag/                    # Node 3: Chroma vector store + retrieval
+├── 4_recommendations/        # Node 4: OpenRouter LLM structured JSON output
+├── knowledge_base/           # 4 plain-text grid management reference documents
+├── models/                   # solar_model_rfr.pkl
+└── weather/                  # Open-Meteo fetcher with 29-country coordinates
+```
+
+**Node flow:** Forecast -> Risk Analysis -> RAG Retrieval -> LLM Recommendations
+
+**Output schema:**
+```json
+{
+  "forecast_summary": "...",
+  "risk_periods": [{"period": "...", "risk": "...", "severity": "high|medium|low"}],
+  "strategies": [{"title": "...", "description": "...", "source": "retrieved|general"}],
+  "responsible_ai_note": "..."
+}
 ```
 
 ### Walkthrough/
@@ -109,13 +146,35 @@ Contains the formal project report in both LaTeX source (`Report.tex`) and compi
 
 ---
 
+## Environment Setup
+
+The ML pipeline and Streamlit app require no API keys. The Agent_Pipeline requires one key for the LLM node.
+
+Create a `.env` file in `Agent_Pipeline/` (never commit this):
+
+```
+OPENROUTER_API_KEY=your_key_here
+```
+
+Get a free key at [openrouter.ai](https://openrouter.ai). The pipeline uses `openrouter/free` which automatically routes to whichever free model is available — no specific model needs to be selected or managed.
+
+Install dependencies:
+
+```bash
+cd Agent_Pipeline
+pip install -r requirements.txt
+python run_agent.py
+```
+
+---
+
 ## Roadmap
 
 - [x] Data pipeline (EMHIRES + NASA POWER fusion)
 - [x] Model training and evaluation (LR + RFR)
 - [x] Interactive Streamlit dashboard
 - [x] Deployment on Hugging Face Spaces
-- [ ] AI agent-based expansion for intelligent decision support
+- [x] Agentic AI layer — LangGraph pipeline with RAG and LLM grid recommendations
 
 ---
 
