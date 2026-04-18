@@ -26,13 +26,40 @@ def _compute_comparison(_model, compare_countries, hour, month, irradiance, temp
     return compare_cf, profiles_24h, monthly_data
 
 
-def render(model, country_code, hour, month, irradiance, temperature, wind_speed, installed_capacity):
+def render():
+    from model_loader import load_trained_model, AVAILABLE_MODELS
+
+    @st.cache_resource
+    def _get_model(name):
+        return load_trained_model(name)
+
+    mc1, mc2 = st.columns([2, 1])
+    with mc1:
+        model_choice = st.selectbox("Model", list(AVAILABLE_MODELS.keys()), index=1, key="cc_model")
+    with mc2:
+        installed_capacity = st.number_input("Installed Capacity (kW)", value=100.0, min_value=1.0, step=10.0, key="cc_capacity")
+
+    model = _get_model(model_choice)
+
     st.subheader("Country Comparison")
     st.caption("See how different countries compare for solar energy under the same weather conditions.")
 
+    inp1, inp2, inp3, inp4, inp5 = st.columns(5)
+    with inp1:
+        month = st.slider("Month", 1, 12, 6, key="cc_month")
+    with inp2:
+        hour = st.slider("Hour (UTC)", 0, 23, 12, key="cc_hour")
+    with inp3:
+        irradiance = st.slider("Irradiance (W/m²)", 0, 1000, 600, step=10, key="cc_irradiance")
+    with inp4:
+        temperature = st.slider("Temperature (°C)", -20, 50, 25, key="cc_temperature")
+    with inp5:
+        wind_speed = st.slider("Wind Speed (m/s)", 0.0, 30.0, 5.0, step=0.5, key="cc_wind")
+    st.markdown("---")
+
     compare_countries = st.multiselect(
         "Select countries to compare:", list(COUNTRIES.keys()),
-        default=["ES", "DE", "GB", "IT", "NO"],
+        default=["ES", "DE", "UK", "IT", "NO"],
         format_func=lambda x: f"{x} — {COUNTRIES[x]}"
     )
 
@@ -82,7 +109,7 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
             st.markdown("##### 24-Hour Generation Overlay")
             fig_24h = go.Figure()
             fig_24h.add_vrect(x0=0, x1=6, fillcolor="rgba(30,30,30,0.3)", line_width=0)
-            fig_24h.add_vrect(x0=18, x1=23, fillcolor="rgba(30,30,30,0.3)", line_width=0)
+            fig_24h.add_vrect(x0=18, x1=24, fillcolor="rgba(30,30,30,0.3)", line_width=0)
             for idx, cc in enumerate(compare_countries):
                 fig_24h.add_trace(go.Scatter(
                     x=list(range(24)), y=profiles_24h[cc],
@@ -144,7 +171,7 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
             daily_kwh = sum(profiles_24h[cc])
             annual_mwh = daily_kwh * 365 / 1000
             peak_kw = max(profiles_24h[cc])
-            peak_h = profiles_24h[cc].index(peak_kw)
+            peak_h = int(np.argmax(profiles_24h[cc]))
             pct_of_best = (compare_cf[cc] / best_cf) * 100 if best_cf > 0 else 0
             rows.append({
                 "Rank": f"#{rank}",

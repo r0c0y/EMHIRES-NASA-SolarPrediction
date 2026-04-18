@@ -1,6 +1,7 @@
 import sys
 import os
 import datetime
+import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from agent_model_loader import predict_capacity_factor
@@ -40,7 +41,7 @@ def forecast_node(state: GridAdvisorState) -> dict:
     ]
 
     cf_value = max(hourly_profile)
-    peak_hour = hourly_profile.index(cf_value)
+    peak_hour = int(np.argmax(hourly_profile))
     peak_weather = weather[peak_hour]
 
     monthly_profile = [

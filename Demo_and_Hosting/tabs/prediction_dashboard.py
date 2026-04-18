@@ -4,7 +4,39 @@ import plotly.graph_objects as go
 from utils import COUNTRIES, MONTH_NAMES, PLOT_LAYOUT, AMBER
 from model_loader import predict_capacity_factor
 
-def render(model, country_code, hour, month, irradiance, temperature, wind_speed, installed_capacity):
+def render():
+    from model_loader import load_trained_model, AVAILABLE_MODELS
+
+    @st.cache_resource
+    def _get_model(name):
+        return load_trained_model(name)
+
+    c0, c1, c2 = st.columns([1.5, 1.5, 1])
+    with c0:
+        country_code = st.selectbox("Country", list(COUNTRIES.keys()),
+            index=list(COUNTRIES.keys()).index("ES"),
+            format_func=lambda x: f"{x} — {COUNTRIES[x]}", key="pd_country")
+    with c1:
+        model_choice = st.selectbox("Model", list(AVAILABLE_MODELS.keys()), index=1, key="pd_model")
+    with c2:
+        installed_capacity = st.number_input("Installed Capacity (kW)", value=100.0, min_value=1.0, step=10.0, key="pd_capacity")
+
+    model = _get_model(model_choice)
+
+    st.markdown("#### Conditions")
+    inp1, inp2, inp3, inp4, inp5 = st.columns(5)
+    with inp1:
+        month = st.slider("Month", 1, 12, 6, key="pd_month")
+    with inp2:
+        hour = st.slider("Hour (UTC)", 0, 23, 12, key="pd_hour")
+    with inp3:
+        irradiance = st.slider("Irradiance (W/m²)", 0, 1000, 600, step=10, key="pd_irradiance")
+    with inp4:
+        temperature = st.slider("Temperature (°C)", -20, 50, 25, key="pd_temperature")
+    with inp5:
+        wind_speed = st.slider("Wind Speed (m/s)", 0.0, 30.0, 5.0, step=0.5, key="pd_wind")
+    st.markdown("---")
+
     # Compute predictions
     cf = predict_capacity_factor(model, country_code, hour, month, irradiance, temperature, wind_speed)
     power_out = cf * installed_capacity
@@ -19,6 +51,7 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
     peak_kw = max(output_24h)
     peak_hour = hours_range[np.argmax(output_24h)]
     monthly_cf = [predict_capacity_factor(model, country_code, 12, m, irradiance, temperature, wind_speed) for m in range(1, 13)]
+    avg_cf = sum(monthly_cf) / len(monthly_cf)  # country+condition average — used as adaptive reference
 
     # ── Metrics row ──
     st.subheader(f"Forecast — {COUNTRIES[country_code]}")
@@ -46,29 +79,30 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
             mode="gauge+number+delta",
             value=cf,
             number={"suffix": "", "font": {"size": 40}},
-            delta={"reference": 0.5, "increasing": {"color": "#22C55E"}, "decreasing": {"color": "#EF4444"}},
+            delta={"reference": avg_cf, "increasing": {"color": "#22C55E"}, "decreasing": {"color": "#EF4444"}},
             gauge={
                 "axis": {"range": [0, 1], "tickwidth": 1},
                 "bar": {"color": AMBER},
                 "bgcolor": "#292524",
                 "steps": [
-                    {"range": [0, 0.2], "color": "#44403C"},
-                    {"range": [0.2, 0.5], "color": "#57534E"},
-                    {"range": [0.5, 0.8], "color": "#78716C"},
-                    {"range": [0.8, 1.0], "color": "#A8A29E"},
+                    {"range": [0, avg_cf * 0.5], "color": "#44403C"},
+                    {"range": [avg_cf * 0.5, avg_cf], "color": "#57534E"},
+                    {"range": [avg_cf, min(avg_cf * 1.5, 1.0)], "color": "#78716C"},
+                    *([{"range": [min(avg_cf * 1.5, 1.0), 1.0], "color": "#A8A29E"}]
+                      if min(avg_cf * 1.5, 1.0) < 1.0 else []),
                 ],
-                "threshold": {"line": {"color": "#EF4444", "width": 3}, "thickness": 0.8, "value": 0.5},
+                "threshold": {"line": {"color": "#EF4444", "width": 3}, "thickness": 0.8, "value": avg_cf},
             },
             title={"text": "Capacity Factor", "font": {"size": 16}},
         ))
         fig_gauge.update_layout(height=300, **PLOT_LAYOUT)
         st.plotly_chart(fig_gauge, use_container_width=True)
-        st.caption("The needle shows how efficiently the solar system is performing. Above 0.5 (red line) is considered good.")
+        st.caption(f"Needle shows current efficiency vs the yearly average for {COUNTRIES[country_code]} ({avg_cf:.3f}). Green delta = above average.")
 
     with r1c2:
         fig_24h = go.Figure()
         fig_24h.add_vrect(x0=0, x1=6, fillcolor="rgba(30,30,30,0.4)", line_width=0, annotation_text="Night", annotation_position="top left")
-        fig_24h.add_vrect(x0=18, x1=23, fillcolor="rgba(30,30,30,0.4)", line_width=0, annotation_text="Night", annotation_position="top right")
+        fig_24h.add_vrect(x0=18, x1=24, fillcolor="rgba(30,30,30,0.4)", line_width=0, annotation_text="Night", annotation_position="top right")
         fig_24h.add_trace(go.Scatter(x=hours_range, y=output_24h, mode="lines", line=dict(color=AMBER, width=3, shape="spline"),
                                      fill="tozeroy", fillcolor="rgba(217,119,6,0.12)", name="Generation"))
         fig_24h.add_trace(go.Scatter(x=[hour], y=[output_24h[hour]], mode="markers+text",
@@ -82,7 +116,7 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
         fig_24h.update_layout(title="24-Hour Generation Profile", xaxis_title="Hour (UTC)", yaxis_title="Output (kW)",
                               xaxis=dict(dtick=2), height=300, showlegend=True, legend=dict(orientation="h", y=1.12), **PLOT_LAYOUT)
         st.plotly_chart(fig_24h, use_container_width=True)
-        st.caption("How much power your solar system produces throughout the day. The curve follows the sun — rising in the morning and dropping at sunset.")
+        st.caption("Modelled 24-hour output using solar position approximation for irradiance scaling. Selected hour marked in red, peak in green.")
 
     # ── Row 2: Monthly bars + Radar ──
     r2c1, r2c2 = st.columns(2)
