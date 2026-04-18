@@ -84,7 +84,7 @@ else:
 
 # ---- main area ----
 st.title("☀️ SolarIntel")
-st.caption(f"Intelligent Solar Energy Generation Forecasting — EMHIRES-NASA | {model_choice}")
+st.caption(f"Solar Energy Generation Forecasting | {model_choice}")
 
 tab_forecast, tab_compare, tab_advisor = st.tabs(
     ["Prediction Dashboard", "Country Comparison", "Grid Advisor"]
@@ -369,7 +369,7 @@ with tab_compare:
                 "Daily kWh": f"{daily_kwh:.1f}",
                 "Annual MWh": f"{annual_mwh:.1f}",
             })
-        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
+        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
         st.caption(f"All values computed with: {irradiance} W/m² | {temperature}°C | {wind_speed} m/s | {installed_capacity} kW system | Month {month}")
 
     else:
@@ -390,7 +390,7 @@ with tab_advisor:
     if _AP not in _sys.path:
         _sys.path.insert(0, _AP)
 
-    st.subheader("Grid Advisor — Agentic AI Optimization")
+    st.subheader("Grid Advisor : Agentic AI Optimization")
     st.caption(
         "Fetches real weather forecast data from Open-Meteo (up to 15 days ahead), runs a 4-node LangGraph pipeline, "
         "and returns structured grid management recommendations grounded in European best practices."
