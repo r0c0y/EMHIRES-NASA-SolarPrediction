@@ -45,8 +45,8 @@ st.sidebar.markdown("---")
 # Model selection
 st.sidebar.header("Model")
 model_choice = st.sidebar.selectbox(
-    "Algorithm", list(AVAILABLE_MODELS.keys()), index=0,
-    help="Linear Regression is fast and interpretable. Random Forest captures non-linear patterns."
+    "Algorithm", list(AVAILABLE_MODELS.keys()), index=1,
+    help="Random Forest captures non-linear patterns."
 )
 model = get_model(model_choice)
 
@@ -86,8 +86,8 @@ else:
 st.title("☀️ SolarIntel")
 st.caption(f"Intelligent Solar Energy Generation Forecasting — EMHIRES-NASA | {model_choice}")
 
-tab_forecast, tab_compare, tab_advisor, tab_about = st.tabs(
-    ["Prediction Dashboard", "Country Comparison", "Grid Advisor", "Project Info"]
+tab_forecast, tab_compare, tab_advisor = st.tabs(
+    ["Prediction Dashboard", "Country Comparison", "Grid Advisor"]
 )
 
 
@@ -217,99 +217,9 @@ with tab_forecast:
         st.plotly_chart(fig_radar, width="stretch")
         st.caption("Each axis shows how favorable that factor is (0–100%). A larger polygon = better overall conditions for solar generation.")
 
-    # ── Chart explanations row ──
-    ex1, ex2 = st.columns(2)
-    with ex1:
-        st.caption("**24h Profile** — Shows estimated power output for each hour today. The amber curve follows the solar arc. The red diamond marks your selected hour. Night hours are shaded dark.")
-    with ex2:
-        st.caption("**Monthly CF** — Capacity factor at solar noon for each month. Summer months (May–Aug) typically yield the highest output. The red dashed line marks your selected month.")
+    # Clean UI, Monthly Breakdown and Explanations removed
 
-    st.markdown("---")
-
-    # ── Row 3: Monthly Table + Heatmap ──
-    r3c1, r3c2 = st.columns([1, 2])
-
-    with r3c1:
-        # Styled monthly CF table
-        st.subheader("Monthly Breakdown")
-        table_data = []
-        annual_avg = sum(monthly_cf) / 12
-        for i, m_name in enumerate(MONTH_NAMES):
-            cf_val = monthly_cf[i]
-            power_val = cf_val * installed_capacity
-            daily_est = power_val * (10 + 2 * np.sin((i + 1 - 3) * np.pi / 6))  # daylight hours estimate
-            # Rating
-            if cf_val >= annual_avg * 1.2:
-                rating = "Excellent"
-            elif cf_val >= annual_avg * 0.8:
-                rating = "Good"
-            elif cf_val > 0.05:
-                rating = "Low"
-            else:
-                rating = "Minimal"
-            table_data.append({
-                "Month": m_name,
-                "CF": f"{cf_val:.4f}",
-                "Peak kW": f"{power_val:.1f}",
-                "Rating": rating,
-            })
-        st.dataframe(
-            pd.DataFrame(table_data),
-            width="stretch",
-            hide_index=True,
-        )
-        st.caption(f"Annual average CF: **{annual_avg:.4f}** | Best month: **{MONTH_NAMES[np.argmax(monthly_cf)]}** ({max(monthly_cf):.4f})")
-
-    with r3c2:
-        # Heatmap (full height)
-        st.subheader("Annual Generation Heatmap")
-        heatmap_data = np.zeros((12, 24))
-        for mi in range(12):
-            for hi in range(24):
-                si = irradiance * max(0, np.sin((hi - 6) * np.pi / 12)) if 6 <= hi <= 18 else 0
-                heatmap_data[mi][hi] = predict_capacity_factor(model, country_code, hi, mi + 1, si, temperature, wind_speed)
-        fig_hm = go.Figure(go.Heatmap(
-            z=heatmap_data, x=[f"{h}:00" for h in range(24)], y=MONTH_NAMES,
-            colorscale=[[0, "#1C1917"], [0.25, "#44403C"], [0.5, "#78716C"], [0.75, "#D97706"], [1, "#F59E0B"]],
-            colorbar=dict(title=dict(text="CF")),
-            hovertemplate="Hour: %{x}<br>Month: %{y}<br>CF: %{z:.3f}<extra></extra>",
-        ))
-        fig_hm.update_layout(xaxis_title="Hour of Day", yaxis_title="Month", height=420, **PLOT_LAYOUT)
-        st.plotly_chart(fig_hm, width="stretch")
-        st.caption("**Heatmap** — Each cell shows the predicted capacity factor for a specific hour and month combination. Bright amber = high generation. Dark = low/no generation. The diagonal bright band shows how peak solar hours shift with seasons.")
-
-    # ── Formula Explanation ──
-    st.markdown("---")
-    with st.expander("How the prediction works — Model Formula", expanded=False):
-        st.markdown("""
-### Linear Regression Model
-
-Our model predicts the **Capacity Factor (CF)** using a multivariate linear equation:
-
-```
-CF = w₁·Irradiance + w₂·Hour + w₃·Temperature + w₄·Wind + w₅·Month + Σ(wᵢ·Countryᵢ) + bias
-```
-
-Where:
-- **Irradiance (GHI)** — Global Horizontal Irradiance in W/m². The strongest predictor — more sunlight = more power.
-- **Hour** — Time of day (0–23 UTC). Captures the solar elevation angle throughout the day.
-- **Temperature** — Surface air temperature in °C. Panels lose ~0.4% efficiency per °C above 25°C.
-- **Wind Speed** — Wind at 10m height in m/s. Helps cool panels, slightly improving efficiency.
-- **Month** — Seasonal variation (1–12). Summer months have longer days and higher sun angles.
-- **Country** — One-hot encoded (29 binary variables). Captures geographic latitude, climate, and typical cloud cover patterns.
-
-### Key Metrics
-- **Capacity Factor (CF)**: Ratio of actual output to theoretical maximum (0.0 to 1.0). A CF of 0.47 means the panel operates at 47% of its rated capacity.
-- **Power Output**: `CF × Installed Capacity (kW)`
-- **Daily Energy**: Sum of hourly power output over 24 hours (kWh)
-
-### Training Details
-- **Dataset**: 3.8 million hourly observations across 29 European countries (2001–2015)
-- **Algorithm**: Ordinary Least Squares Linear Regression (scikit-learn)
-- **Train/Test Split**: 80/20
-- **R² Score**: 0.788 — explains ~79% of variation in solar generation
-- **MAE**: 0.053 — average prediction error of 5.3 percentage points
-        """)
+    # Removed 'How the prediction works' section to simplify the UI
 
 
 # TAB 2: COUNTRY COMPARISON
@@ -642,48 +552,4 @@ with tab_advisor:
         if rec.get("responsible_ai_note"):
             st.caption(f"**Responsible AI:** {rec['responsible_ai_note']}")
 
-# TAB 4: PROJECT INFO
-with tab_about:
-    st.subheader("Project Technical Specifications")
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.markdown("""
-### Datasets
-
-| Source | Coverage | Period | Resolution |
-|--------|----------|--------|------------|
-| EMHIRES | 30 EU countries | 2001–2015 | Hourly CF |
-| NASA POWER | Global | 2001–2015 | Hourly Met |
-
-### Technology Stack
-
-| Component | Technology |
-|-----------|------------|
-| Model | Linear Regression (Scikit-Learn) |
-| Processing | Pandas, NumPy |
-| Visualization | Plotly |
-| Interface | Streamlit |
-| Language | Python 3.12 |
-        """)
-
-    with col2:
-        st.markdown("""
-### Pipeline Modules
-
-1. **Dataset Visualization** — Exploratory analysis
-2. **Cleaning & Transformation** — Missing data, reshaping
-3. **Merging** — EMHIRES + NASA alignment
-4. **Encoding** — One-Hot encoding (29 countries)
-5. **Training & Evaluation** — Linear Regression, 80/20
-6. **Analysis Visualization** — Performance analysis
-
-### Team
-- **Mahir** — Data Integration, Cleaning, Merging, Lead
-- **Priyanshu** — Encoding, Training, UI Development
-- **Antik** — Dataset Visualization, Deployment
-- **Vansh** — Analysis Visualization, Documentation
-        """)
-
-    st.markdown("---")
-    st.caption("SolarIntel — GenAI Capstone Project, Milestone 1 & 2 — 2026")
+# End of app
