@@ -5,9 +5,30 @@ import plotly.graph_objects as go
 from utils import COUNTRIES, MONTH_NAMES, PLOT_LAYOUT, AMBER
 from model_loader import predict_capacity_factor
 
+
+@st.cache_data(ttl=300, show_spinner=False)
+def _compute_comparison(_model, compare_countries, hour, month, irradiance, temperature, wind_speed, installed_capacity):
+    """Cache heavy computation so changing tabs or small tweaks don't re-run everything."""
+    compare_cf = {cc: predict_capacity_factor(_model, cc, hour, month, irradiance, temperature, wind_speed) for cc in compare_countries}
+
+    profiles_24h = {}
+    for cc in compare_countries:
+        profile = []
+        for h in range(24):
+            si = irradiance * max(0, np.sin((h - 6) * np.pi / 12)) if 6 <= h <= 18 else 0
+            profile.append(predict_capacity_factor(_model, cc, h, month, si, temperature, wind_speed) * installed_capacity)
+        profiles_24h[cc] = profile
+
+    monthly_data = {}
+    for cc in compare_countries:
+        monthly_data[cc] = [predict_capacity_factor(_model, cc, 12, m, irradiance, temperature, wind_speed) for m in range(1, 13)]
+
+    return compare_cf, profiles_24h, monthly_data
+
+
 def render(model, country_code, hour, month, irradiance, temperature, wind_speed, installed_capacity):
     st.subheader("Country Comparison")
-    st.caption("Compare solar generation potential across EU countries under identical weather conditions.")
+    st.caption("See how different countries compare for solar energy under the same weather conditions.")
 
     compare_countries = st.multiselect(
         "Select countries to compare:", list(COUNTRIES.keys()),
@@ -18,34 +39,18 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
     if len(compare_countries) >= 2:
         palette = ["#D97706", "#F59E0B", "#3B82F6", "#22C55E", "#EF4444", "#A855F7", "#EC4899", "#14B8A6"]
 
-        # Compute all data
-        compare_cf = {cc: predict_capacity_factor(model, cc, hour, month, irradiance, temperature, wind_speed) for cc in compare_countries}
+        # Use cached computation
+        compare_cf, profiles_24h, monthly_data = _compute_comparison(
+            model, tuple(compare_countries), hour, month, irradiance, temperature, wind_speed, installed_capacity
+        )
         sorted_countries = sorted(compare_countries, key=lambda c: compare_cf[c], reverse=True)
-
-        # Compute 24h profiles for all countries
-        profiles_24h = {}
-        for cc in compare_countries:
-            profile = []
-            for h in range(24):
-                si = irradiance * max(0, np.sin((h - 6) * np.pi / 12)) if 6 <= h <= 18 else 0
-                profile.append(predict_capacity_factor(model, cc, h, month, si, temperature, wind_speed) * installed_capacity)
-            profiles_24h[cc] = profile
-
-        # Compute monthly CF for all countries
-        monthly_data = {}
-        for cc in compare_countries:
-            monthly_data[cc] = [predict_capacity_factor(model, cc, 12, m, irradiance, temperature, wind_speed) for m in range(1, 13)]
 
         # Country metrics
         rank_cols = st.columns(len(sorted_countries))
         for i, cc in enumerate(sorted_countries):
             with rank_cols[i]:
                 daily_kwh = sum(profiles_24h[cc])
-                st.metric(
-                    f"{COUNTRIES[cc]}",
-                    f"{compare_cf[cc]:.4f}",
-                    delta=None
-                )
+                st.metric(f"{COUNTRIES[cc]}", f"{compare_cf[cc]:.4f}", delta=None)
                 st.caption(f"{daily_kwh:.0f} kWh/day")
 
         st.markdown("---")
@@ -69,13 +74,12 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
                 xaxis=dict(title="Capacity Factor", range=[0, max_val * 1.25]),
                 height=350, **PLOT_LAYOUT
             )
-            st.plotly_chart(fig_rank, width="stretch")
-            st.caption("Countries ranked by capacity factor at your selected conditions. Higher = better solar potential for that region.")
+            st.plotly_chart(fig_rank, use_container_width=True)
+            st.caption("Which country gets the most from its solar panels. Longer bar = better solar potential.")
 
         with cr2:
             st.markdown("##### 24-Hour Generation Overlay")
             fig_24h = go.Figure()
-            # Night shading
             fig_24h.add_vrect(x0=0, x1=6, fillcolor="rgba(30,30,30,0.3)", line_width=0)
             fig_24h.add_vrect(x0=18, x1=23, fillcolor="rgba(30,30,30,0.3)", line_width=0)
             for idx, cc in enumerate(compare_countries):
@@ -89,8 +93,8 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
                 yaxis_title="Output (kW)", height=350,
                 legend=dict(orientation="h", y=1.12), **PLOT_LAYOUT
             )
-            st.plotly_chart(fig_24h, width="stretch")
-            st.caption("All countries under the same weather. Differences come from the model's learned geographic coefficients (latitude, climate patterns).")
+            st.plotly_chart(fig_24h, use_container_width=True)
+            st.caption("How each country's solar output rises and falls throughout the day.")
 
         st.markdown("---")
 
@@ -111,8 +115,8 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
                 xaxis_title="Month", yaxis_title="CF",
                 height=380, legend=dict(orientation="h", y=1.12), **PLOT_LAYOUT
             )
-            st.plotly_chart(fig_monthly, width="stretch")
-            st.caption("Noon capacity factor by month. Southern countries (Spain, Italy) show higher summer peaks. Northern countries (Norway, UK) show flatter, lower curves.")
+            st.plotly_chart(fig_monthly, use_container_width=True)
+            st.caption("How solar potential changes across the year for each country. Higher lines = better months.")
 
         with cr4:
             st.markdown("##### Country × Month Heatmap")
@@ -126,8 +130,8 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
                 hovertemplate="%{y}<br>%{x}: CF = %{z:.4f}<extra></extra>",
             ))
             fig_hm.update_layout(height=380, **PLOT_LAYOUT)
-            st.plotly_chart(fig_hm, width="stretch")
-            st.caption("Warmer colors indicate higher generation. This reveals both the best months AND best countries at a glance.")
+            st.plotly_chart(fig_hm, use_container_width=True)
+            st.caption("Bright cells = strong solar months. Dark cells = weak. Quickly spot the best country + month combos.")
 
         st.markdown("---")
 
@@ -152,7 +156,6 @@ def render(model, country_code, hour, month, irradiance, temperature, wind_speed
                 "Annual MWh": f"{annual_mwh:.1f}",
             })
         st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
-        st.caption(f"All values computed with: {irradiance} W/m² | {temperature}°C | {wind_speed} m/s | {installed_capacity} kW system | Month {month}")
 
     else:
         st.info("Select at least **2 countries** above to start comparing.")
