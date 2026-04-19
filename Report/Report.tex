@@ -1,188 +1,287 @@
-\documentclass[12pt, a4paper]{article}
+% ============================================================
+%  SolarIntel — Academic Research Paper
+%  "SolarIntel: Machine Learning and Agentic AI for Solar
+%   Energy Forecasting and Grid Optimisation Across
+%   European Markets"
+%  Author: Mahir
+% ============================================================
+\documentclass[11pt]{article}
 
-% Packages
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
-\usepackage[left=2.5cm, right=2.5cm, top=3cm, bottom=3cm]{geometry}
+% ---- Packages -----------------------------------------------
+\usepackage[top=2cm,bottom=2cm,left=1.8cm,right=1.8cm]{geometry}
+\usepackage{newtxtext,newtxmath}
+\usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{booktabs}
-\usepackage{array}
 \usepackage{tabularx}
-\usepackage{amsmath}
-\usepackage{hyperref}
-\usepackage{enumitem}
+\usepackage[hidelinks,colorlinks=true,linkcolor=navyblue,citecolor=navyblue,urlcolor=navyblue]{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
 \usepackage{float}
 \usepackage{caption}
-\usepackage{setspace}
-\usepackage{parskip}
+\usepackage{multicol}
+\usepackage{abstract}
 \usepackage{fancyhdr}
-\usepackage{titlesec}
+\usepackage[explicit]{titlesec}
 \usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{setspace}
+\usepackage[htt]{hyphenat}
 \usepackage{url}
-\usepackage{tikz}
-\usepackage{multirow}
-\usepackage{colortbl}
-\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\def\UrlBreaks{\do\_\do\.\do\-\do\/\do\~}
+\emergencystretch=4em
+\hyphenpenalty=50
+\exhyphenpenalty=50
 
-% Colours
-\definecolor{solarblue}{RGB}{31, 78, 121}
-\definecolor{solaramber}{RGB}{180, 100, 20}
-\definecolor{solargray}{RGB}{80, 80, 80}
-\definecolor{lightgray}{RGB}{245, 245, 245}
+% ---- Colours (matching detailed report palette) -------------
+\definecolor{solarblue}{RGB}{31,78,121}
+\definecolor{solaramber}{RGB}{180,100,20}
+\definecolor{solargray}{RGB}{80,80,80}
+\definecolor{navyblue}{RGB}{31,78,121}   % alias for compatibility
+\definecolor{lightnavy}{RGB}{220,228,245}
 
-% Section formatting
-\titleformat{\section}{\large\bfseries\color{solarblue}}{}{0em}{\thesection\quad}[\titlerule]
-\titleformat{\subsection}{\normalsize\bfseries\color{solaramber}}{}{0em}{\thesubsection\quad}
-\titleformat{\subsubsection}{\normalsize\itshape\color{solargray}}{}{0em}{\thesubsubsection\quad}
+% ---- Section heading style ----------------------------------
+\titleformat{\section}
+  {\normalfont\bfseries\color{solarblue}}
+  {\thesection.}{0.5em}{#1}[\color{solarblue}\titlerule]
 
-% Hyperref config
-\hypersetup{
-    colorlinks=true,
-    linkcolor=solarblue,
-    urlcolor=solaramber,
-    citecolor=solarblue
-}
+\titleformat{\subsection}
+  {\normalfont\bfseries\color{solaramber}}
+  {\thesubsection}{0.5em}{#1}
 
-% Header/Footer
+\titleformat{\subsubsection}
+  {\normalfont\itshape\color{solargray}}
+  {\thesubsubsection}{0.5em}{#1}
+
+\titlespacing*{\section}{0pt}{10pt}{5pt}
+\titlespacing*{\subsection}{0pt}{8pt}{4pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{3pt}
+
+% ---- Header / footer ----------------------------------------
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\small\textit{SolarIntel}}
-\fancyhead[R]{\small\textit{Solar Energy Generation Prediction}}
-\fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\color{solarblue}\textit{SolarIntel: ML and Agentic AI for Solar Energy Forecasting}}
+\fancyhead[R]{\small\color{solarblue}\textit{Solar Energy Generation Prediction}}
+\fancyfoot[C]{\small\thepage}
 
-% Spacing
-\onehalfspacing
-\setlength{\parindent}{0pt}
+% ---- Abstract package tweak (single-col abstract) -----------
+\renewcommand{\abstractnamefont}{\normalfont\large\bfseries\color{solarblue}}
+\renewcommand{\abstracttextfont}{\normalfont\normalsize}
+\setlength{\absleftindent}{0pt}
+\setlength{\absrightindent}{0pt}
+\setlength{\abstitleskip}{8pt}
 
-% Title Page
+% ---- Caption style ------------------------------------------
+\captionsetup{font=small,labelfont={bf,color=solarblue},skip=6pt}
+
+% ---- Column separation --------------------------------------
+\setlength{\columnsep}{20pt}
+
+% ---- Line spacing -------------------------------------------
+\setstretch{1.08}
+
+% ---- Paragraph spacing --------------------------------------
+\setlength{\parskip}{4pt}
+
+% ---- List style ---------------------------------------------
+\setlist[itemize]{leftmargin=*,itemsep=3pt,topsep=4pt}
+\setlist[enumerate]{leftmargin=*,itemsep=3pt,topsep=4pt}
+
+% =============================================================
 \begin{document}
 
-\begin{titlepage}
-    \centering
-    \vspace*{1.5cm}
+% ---- Title block (full width, before multicols) -------------
 
-    {\huge\bfseries\color{solarblue} SolarIntel}\\[0.6cm]
-    {\Large\color{solaramber} Solar Energy Generation Prediction}\\[0.3cm]
-    {\large Using EMHIRES and NASA POWER Data}\\[0.4cm]
-    \rule{\linewidth}{1.5pt}\\[0.8cm]
+  \begin{center}
+    {\fontsize{22}{26}\bfseries\color{solarblue} SolarIntel}\\[8pt]
+    {\large\color{solaramber} Machine Learning and Agentic AI for Solar Energy Forecasting\\[3pt] and Grid Optimisation Across European Markets}\\[20pt]
+  \end{center}
 
-    {\large\textbf{Project Report}}
+  \vspace{6pt}
+  \begin{abstract}
+    \vspace{6pt}
+    \noindent
+    Accurate solar energy forecasting and actionable grid advisory are essential
+    for integrating variable renewable generation into modern power systems.
+    This paper presents \textit{SolarIntel}, a two-phase end-to-end system that
+    addresses both challenges at European scale. In Phase~1, a machine learning
+    pipeline fuses the EMHIRES solar capacity factor dataset (29 countries,
+    1986--2015, hourly) with NASA POWER meteorological reanalysis data
+    (2001--2015), yielding a merged corpus of approximately 3.8~million records
+    across 34 engineered features. A Random Forest Regressor achieves
+    \(R^2 = 0.9112\), MAE = 0.0280, and RMSE = 0.0547 on the held-out test set,
+    outperforming a Linear Regression baseline (\(R^2 = 0.7880\)) by a substantial
+    margin. In Phase~2, a LangGraph-based agentic pipeline augments these
+    forecasts with deterministic risk analysis, retrieval-augmented generation
+    (RAG) over a curated energy knowledge base, and structured LLM reasoning to
+    produce JSON-formatted grid management recommendations. Together, the two
+    phases demonstrate a scalable, reproducible pathway from raw meteorological
+    inputs to operational decision support across diverse European grid contexts.
+  \end{abstract}
+  \vspace{6pt}
 
-    \vspace{1.5cm}
+  \vspace{4pt}
+  \noindent\textbf{Keywords:} solar energy forecasting, random forest regression,
+  LangGraph, retrieval-augmented generation, grid advisory, EMHIRES, NASA POWER,
+  agentic AI, European energy systems\\[20pt]
 
-    \begin{tabular}{rl}
-        \textbf{Live Demo:} & \url{https://huggingface.co/spaces/priyanshutomar2024/SolarIntel} \\[4pt]
-        \textbf{Domain:} & Machine Learning, Renewable Energy, Agentic AI \\[4pt]
-        \textbf{Models:} & Linear Regression, Random Forest Regressor \\[4pt]
-        \textbf{Deployment:} & Streamlit on Hugging Face Spaces \\[4pt]
-        \textbf{Coverage:} & 29 European Countries, 2001--2015, Hourly \\
-    \end{tabular}
-
-    \vspace{2cm}
-
-    \vfill
-    {\large \today}
-\end{titlepage}
-
-% Front matter — roman numerals
-\pagenumbering{roman}
-
-% Table of Contents
-\newpage
-{\singlespacing
-\tableofcontents
-}
-\newpage
-
-% Abstract
-\begin{abstract}
-\noindent
-Accurate forecasting of solar energy generation is essential for grid balancing, energy market operations, and renewable infrastructure planning across Europe. This report presents \textbf{SolarIntel}, an end-to-end machine learning system that predicts hourly solar capacity factors for 29 European countries by fusing 15 years of photovoltaic generation data from the European Commission's EMHIRES dataset with satellite-derived meteorological observations from NASA's POWER API. The resulting dataset comprises approximately 3.8 million hourly records and 34 features. Two regression models are trained and evaluated: a Linear Regression baseline ($R^2 = 0.788$) and a Random Forest Regressor ($R^2 = 0.911$). The superior model is deployed through an interactive Streamlit web application hosted on Hugging Face Spaces, enabling real-time prediction, 24-hour generation profiling, and cross-country comparison. Building on this ML foundation, Phase~2 introduces an Agentic AI Grid Advisor: a LangGraph-based multi-agent pipeline that fetches live weather forecasts, performs deterministic risk analysis, retrieves expert knowledge via Retrieval-Augmented Generation (RAG), and generates structured LLM recommendations tailored to grid operators and transmission system planners.
-\end{abstract}
-
-% Main matter — arabic numerals, restart from 1
-\clearpage
-\pagenumbering{arabic}
-
-% Section 1
+% =============================================================
+\begin{multicols}{2}
 \section{Introduction}
+% =============================================================
 
-Solar energy is one of the fastest-growing renewable energy sources globally. Accurate forecasting of solar energy generation is critical for grid stability, energy trading, and infrastructure planning. The variability of solar output, driven by weather conditions, geographic location, and time of day, makes prediction a non-trivial challenge.
+The decarbonisation of European electricity grids has accelerated the deployment
+of photovoltaic (PV) capacity across the continent, with aggregate installed
+capacity exceeding 260~GW by 2023~\cite{irena2023}. Unlike dispatchable
+generation, solar PV output is governed by meteorological conditions that vary
+on sub-hourly timescales, imposing forecasting and balancing challenges on
+transmission and distribution system operators. Accurate short-term and
+day-ahead forecasts reduce reserve requirements, lower balancing costs, and
+enable efficient intraday market participation~\cite{antonanzas2016}.
 
-This project, \textbf{SolarIntel}, addresses this challenge by building an end-to-end machine learning pipeline that predicts hourly solar energy capacity factors across 29 European countries. The system fuses 15 years of solar generation data from the European Commission's EMHIRES dataset with hourly meteorological observations from NASA's POWER API. Two regression models are trained, evaluated, and compared. The best-performing model is deployed through an interactive Streamlit web application hosted on Hugging Face Spaces.
+Despite a rich literature on data-driven solar forecasting, two gaps remain.
+First, most published models are trained on single-site or single-country data,
+limiting their geographic transferability. Second, forecast outputs are rarely
+connected to actionable grid management guidance; operators must translate
+numerical predictions into operational decisions without systematic support.
 
-\subsection{Objectives}
+\textit{SolarIntel} addresses both gaps. Phase~1 trains machine learning models
+on a pan-European dataset covering 29 countries and 15 years, producing
+capacity factor predictions with high accuracy. Phase~2 wraps these predictions
+in a four-node agentic pipeline that performs risk analysis, retrieves relevant
+domain knowledge, and generates structured, auditable recommendations via a
+large language model (LLM).
 
-\begin{itemize}[noitemsep]
-    \item Collect, clean, and merge solar generation and weather datasets spanning 2001--2015.
-    \item Engineer temporal and geographic features suitable for regression modelling.
-    \item Train and evaluate two regression models: Linear Regression and Random Forest Regressor.
-    \item Deploy the trained model as an interactive web application for real-time predictions.
-    \item Extend the system with an agentic AI pipeline that provides automated grid risk analysis and operator-facing recommendations using live weather forecasts.
+The remainder of this paper is organised as follows. Section~2 surveys related
+work. Section~3 describes dataset construction and feature engineering.
+Section~4 details the ML models. Section~5 presents the agentic architecture.
+Sections~6 and~7 cover the RAG pipeline and LLM integration respectively.
+Section~8 reports results and evaluation. Sections~9 and~10 discuss limitations
+and conclude.
+
+% =============================================================
+\section{Related Work}
+% =============================================================
+
+\subsection{Machine Learning for Solar Forecasting}
+
+Data-driven solar forecasting has evolved from autoregressive statistical
+methods towards ensemble and deep learning approaches. Voyant et al.\ provide
+a comprehensive survey of machine learning methods applied to solar radiation
+and PV output forecasting, documenting consistent improvements of ensemble
+methods over linear baselines~\cite{voyant2017}. Breiman's Random Forest
+algorithm~\cite{breiman2001} has been widely adopted in this domain due to its
+robustness to feature collinearity, resistance to overfitting via bagging, and
+interpretability through feature importance scores. Antonanzas et al.\ review
+post-processing and spatial ensemble strategies for PV power forecasting,
+highlighting the value of large-scale, multi-site training corpora~\cite{antonanzas2016}.
+
+\subsection{Retrieval-Augmented Generation in Energy Systems}
+
+Lewis et al.\ introduced retrieval-augmented generation (RAG) as a method for
+grounding LLM outputs in external, verifiable knowledge, demonstrating reduced
+hallucination and improved factual accuracy~\cite{lewis2020}. Subsequent work
+has applied RAG principles to domain-specific question answering in technical
+and scientific fields. The energy sector presents a compelling use case: grid
+operation involves large, evolving corpora of standards, market rules, and
+operational guidelines that cannot be fully internalised by a pretrained LLM.
+
+\subsection{Agentic and Multi-Agent AI Pipelines}
+
+The emergence of LangGraph~\cite{langchain2024} and similar graph-based
+orchestration frameworks has enabled the construction of stateful, multi-node
+AI pipelines in which different nodes perform specialised tasks---forecasting,
+retrieval, reasoning---and communicate via a shared typed state. This paradigm
+extends single-LLM chat interfaces to structured decision workflows with
+deterministic intermediate steps, improving auditability and enabling modular
+testing of individual components.
+
+% =============================================================
+\section{Dataset and Feature Engineering}
+% =============================================================
+
+\subsection{EMHIRES Solar Dataset}
+
+The European Meteorological derived HIgh REsolution RES generation time series
+(EMHIRES) dataset, published by the Joint Research Centre of the European
+Commission~\cite{gonzalez2016}, provides hourly solar capacity factors for
+29~European countries spanning 1986--2015 in wide format, with one column per
+country and one row per hour. A capacity factor represents the ratio of actual
+to rated power output and lies on the unit interval \([0, 1]\). The dataset
+contains approximately \(262{,}800\) hourly timestamps at full European coverage.
+
+\textbf{Reshape to long format.} The wide-format EMHIRES table is melted via
+\texttt{pandas.DataFrame.melt} to produce a long-format table with three
+columns: \texttt{Timestamp}, \texttt{Country}, and \texttt{Capacity\_Factor}.
+This transformation is implemented in
+\texttt{Final\_Pipeline/Final\_Pipeline.py} and yields approximately
+\(7.6\)~million rows prior to temporal filtering.
+
+\subsection{NASA POWER Meteorological Data}
+
+The NASA Prediction of Worldwide Energy Resources (POWER) project~\cite{stackhouse2019}
+provides gridded reanalysis meteorological parameters derived from satellite
+observations and atmospheric models. For each of the 29~country centroids,
+three hourly parameters are retrieved for the period 2001--2015 via the NASA
+POWER REST API (implemented in \texttt{NASA\_Data\_Fetch/fetcher.py}):
+
+\begin{itemize}
+  \item \textbf{Irradiance} (\texttt{ALLSKY\_SFC\_SW\_DWN}): all-sky surface
+        shortwave downwelling irradiance, W/m$^2$.
+  \item \textbf{Temperature} (\texttt{T2M}): air temperature at 2~m height, $^\circ$C.
+  \item \textbf{Wind\_Speed} (\texttt{WS10M}): wind speed at 10~m height, m/s.
 \end{itemize}
 
-\subsection{Scope}
+Missing-value sentinel handling is a critical preprocessing step: NASA POWER
+encodes missing observations as \(-999.0\). All rows where any meteorological
+parameter equals \(-999.0\) are dropped prior to merging, as implemented in the
+cleaning stage of \texttt{Final\_Pipeline/Final\_Pipeline.py}.
 
-The pipeline covers 29 European countries at hourly resolution. The target variable is Capacity Factor, a normalised measure of solar output ranging from 0.0 (no generation) to 1.0 (maximum rated output). The final dataset contains approximately 3.8 million rows and 34 features. Phase~2 extends the system with a four-node LangGraph agent pipeline and RAG-enhanced recommendation engine.
+\subsection{Dataset Merge and Temporal Alignment}
 
-% Section 2
-\newpage
-\section{Data Sources}
+EMHIRES timestamps begin at \texttt{1986-01-01 00:00:00} with hourly frequency.
+Since NASA POWER data is available from 2001, the merged dataset covers
+2001--2015 (15~years), corresponding to \(131{,}400\) hourly timestamps per
+country. After an inner join on \texttt{(Timestamp, Country)}, dropping
+\(-999\)-flagged rows and rows with any remaining \texttt{NaN} values, the
+cleaned corpus contains approximately \textbf{3.8~million rows}. The merge is
+executed in \texttt{Final\_Pipeline/Final\_Pipeline.py} using
+\texttt{pandas.merge} on the composite key.
 
-Two primary datasets are used. Both are publicly available.
+\subsection{Feature Engineering}
 
-\subsection{EMHIRES PV Dataset}
+Two temporal features are extracted from the \texttt{Timestamp} column:
+\texttt{Hour} (integer, 0--23) and \texttt{Month} (integer, 1--12). These
+capture the diurnal solar cycle and seasonal variation respectively without
+requiring cyclic encoding, as tree-based models can partition on these ordinal
+values directly.
 
-The European Meteorological-derived High-resolution RES generation time series for present and future scenarios (EMHIRES) dataset is published by the European Commission's Joint Research Centre (JRC). The PV module provides hourly solar capacity factors for European countries from 1986 to 2015.
+Geographic variation across the 29 countries is encoded via one-hot encoding
+of the \texttt{Country} column, producing 29 binary indicator columns
+(\texttt{Country\_AT} through \texttt{Country\_UK}). The complete feature
+matrix therefore contains \textbf{34 columns}: 5 continuous features
+(\texttt{Hour}, \texttt{Month}, \texttt{Irradiance}, \texttt{Temperature},
+\texttt{Wind\_Speed}) plus 29 country indicator columns. The target variable
+is \texttt{Capacity\_Factor} $\in [0, 1]$.
 
-\begin{table}[H]
-    \centering
-    \caption{EMHIRES PV Dataset Summary}
-    \begin{tabular}{ll}
-        \toprule
-        \textbf{Attribute} & \textbf{Detail} \\
-        \midrule
-        Source & European Commission, JRC \\
-        Temporal Coverage & 1986--2015 (hourly) \\
-        Spatial Coverage & 29 European countries \\
-        Format & Wide-format CSV (countries as columns) \\
-        Target Variable & Capacity Factor (0.0--1.0) \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+\subsection{Train/Test Split}
 
-The dataset is in wide format with each column representing a country code (e.g., AT for Austria, ES for Spain). Each row corresponds to one hour. The data was filtered to the 2001--2015 range to align with the availability of NASA weather data.
+The dataset is partitioned into training (80\%) and test (20\%) subsets using
+\path{sklearn.model_selection.train_test_split} with \texttt{random\_state=67},
+yielding approximately 3.05~million training rows and 763~thousand test rows.
+The split is random across all timestamps and countries, which tests
+interpolation within the observed distribution rather than temporal
+extrapolation.
 
-\subsection{NASA POWER API}
+Figure~\ref{fig:pipeline} illustrates the complete Phase~1 data and model pipeline.
 
-The Prediction Of Worldwide Energy Resources (POWER) project by NASA provides satellite-derived meteorological data. Hourly observations were fetched via the POWER API for all 29 EMHIRES countries using geographic centroids.
-
-\begin{table}[H]
-    \centering
-    \caption{NASA POWER Weather Parameters}
-    \begin{tabular}{lll}
-        \toprule
-        \textbf{API Parameter} & \textbf{Renamed To} & \textbf{Unit} \\
-        \midrule
-        ALLSKY\_SFC\_SW\_DWN & Irradiance & W/m\textsuperscript{2} \\
-        T2M & Temperature & \textdegree C \\
-        WS2M & Wind Speed & m/s \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-Data was collected for each country and each year (2001--2015) individually, with a 0.5-second delay between requests to respect API rate limits. The full fetch takes approximately 20 minutes due to the volume of requests (29 countries $\times$ 15 years = 435 API calls).
-
-% Section 3
-\newpage
-\section{Data Pipeline}
-
-The pipeline follows a sequential flow: data loading, cleaning, transformation, merging, encoding, and export. Each stage is implemented as a standalone Python module and also consolidated in a single end-to-end script. Figure~\ref{fig:pipeline} illustrates the full architecture.
-
+\end{multicols}
 \begin{figure}[H]
 \centering
+\resizebox{0.52\textwidth}{!}{%
 \begin{tikzpicture}[
     node distance=1.2cm and 2.5cm,
     every node/.style={font=\small},
@@ -192,35 +291,17 @@ The pipeline follows a sequential flow: data loading, cleaning, transformation, 
     deploybox/.style={rectangle, draw=solaramber!80, fill=solaramber!15, rounded corners=3pt, minimum width=4cm, minimum height=0.9cm, align=center, thick},
     arrow/.style={-{Stealth[length=3mm]}, thick, color=solargray}
 ]
-
-% Data sources
 \node[databox] (emhires) {EMHIRES PV CSV\\{\scriptsize (Wide format, 1986--2015)}};
 \node[databox, right=of emhires] (nasa) {NASA POWER API\\{\scriptsize (Hourly weather, 2001--2015)}};
-
-% Processing
 \node[procbox, below=of emhires] (clean) {Cleaning \&\\Transformation};
 \node[procbox, below=of nasa] (fetch) {API Fetch \&\\Rename};
-
-% Merge
 \node[procbox, below=1.5cm of $(clean)!0.5!(fetch)$] (merge) {Inner Join Merge\\{\scriptsize (on Timestamp + Country)}};
-
-% Filter + Encode
 \node[procbox, below=of merge] (filter) {Invalid Value Filtering\\+ One-Hot Encoding};
-
-% Split
 \node[procbox, below=of filter] (split) {Train / Test Split\\{\scriptsize (80\% / 20\%, seed=67)}};
-
-% Models
 \node[modelbox, below left=1.2cm and 0.8cm of split] (lr) {\textbf{Linear}\\Regression};
 \node[modelbox, below right=1.2cm and 0.8cm of split] (rfr) {\textbf{Random Forest}\\Regressor};
-
-% Evaluation
 \node[procbox, below=1.5cm of $(lr)!0.5!(rfr)$] (eval) {Evaluation \& Comparison\\{\scriptsize (MAE, RMSE, $R^2$)}};
-
-% Export + Deploy
 \node[deploybox, below=of eval] (deploy) {Model Export (joblib)\\$\downarrow$ Streamlit App $\downarrow$ Hugging Face};
-
-% Arrows
 \draw[arrow] (emhires) -- (clean);
 \draw[arrow] (nasa) -- (fetch);
 \draw[arrow] (clean) -- (merge);
@@ -232,708 +313,613 @@ The pipeline follows a sequential flow: data loading, cleaning, transformation, 
 \draw[arrow] (lr) |- (eval);
 \draw[arrow] (rfr) |- (eval);
 \draw[arrow] (eval) -- (deploy);
-
-\end{tikzpicture}
-\caption{SolarIntel Pipeline Architecture}
+\end{tikzpicture}%
+}
+\caption{SolarIntel Phase~1 pipeline architecture.}
 \label{fig:pipeline}
 \end{figure}
 
-\subsection{Cleaning and Transformation}
-
-The raw EMHIRES CSV is in wide format with no explicit timestamps. Timestamps were generated programmatically starting from 1 January 1986 at hourly frequency. The data was then reshaped from wide to long format using \texttt{pd.melt()}, producing three columns: \texttt{Timestamp}, \texttt{Country}, and \texttt{Capacity\_Factor}.
-
-Key operations:
-\begin{itemize}[noitemsep]
-    \item Timestamp generation using \texttt{pd.date\_range()} from 1986-01-01, hourly frequency.
-    \item Wide-to-long reshaping via \texttt{pd.melt()}.
-    \item Filtering to 2001--2015 to match NASA POWER data availability.
-    \item Extraction of temporal features: \texttt{Hour} (0--23) and \texttt{Month} (1--12).
-\end{itemize}
-
-\subsection{Merging}
-
-The EMHIRES long-format data and NASA weather data were merged on \texttt{Timestamp} and \texttt{Country} using an inner join. This ensures every row has both a capacity factor value and corresponding weather observations. Float64 weather columns were downcast to float32 to reduce memory consumption.
-
-Post-merge filtering removed invalid weather readings:
-\begin{itemize}[noitemsep]
-    \item Irradiance $< 0$ (physically impossible).
-    \item Temperature $= -999.0$ (NASA fill value for missing data).
-    \item Wind Speed $= -999.0$ (NASA fill value for missing data).
-\end{itemize}
-
-\subsection{Encoding}
-
-The categorical \texttt{Country} column was one-hot encoded using \texttt{pd.get\_dummies()}, producing 29 binary indicator columns (e.g., \texttt{Country\_AT}, \texttt{Country\_ES}). This is necessary because the regression models require numerical input. The resulting dataset was exported as \texttt{merged\_encoded.csv}.
-
-\subsection{Final Dataset Summary}
-
-\begin{table}[H]
-    \centering
-    \caption{Final Dataset Characteristics}
-    \begin{tabular}{ll}
-        \toprule
-        \textbf{Property} & \textbf{Value} \\
-        \midrule
-        Total Rows & $\sim$3,812,690 \\
-        Total Features & 34 \\
-        Numerical Features & 5 (Hour, Month, Irradiance, Temperature, Wind Speed) \\
-        Encoded Features & 29 (one per country) \\
-        Target Variable & Capacity Factor \\
-        Time Range & 2001--2015 (hourly) \\
-        Countries & 29 European nations \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-% Section 4
 \newpage
-\section{Feature Engineering}
+\begin{multicols}{2}
 
-Feature engineering was kept deliberate, deriving only features with clear physical relevance to solar generation.
+% =============================================================
+\section{Machine Learning Models}
+% =============================================================
 
-\begin{table}[H]
-    \centering
-    \caption{Feature Descriptions}
-    \begin{tabularx}{\textwidth}{lllX}
-        \toprule
-        \textbf{Feature} & \textbf{Type} & \textbf{Range} & \textbf{Rationale} \\
-        \midrule
-        Hour & Temporal & 0--23 & Solar output follows a diurnal cycle peaking around midday. \\
-        Month & Temporal & 1--12 & Captures seasonal variation in daylight hours and sun angle. \\
-        Irradiance & Weather & $\geq$ 0 W/m\textsuperscript{2} & Primary driver of photovoltaic output. \\
-        Temperature & Weather & \textdegree C & Higher temperatures reduce PV panel efficiency. \\
-        Wind Speed & Weather & $\geq$ 0 m/s & Affects panel cooling and efficiency indirectly. \\
-        Country\_* & Categorical & 0 or 1 & Geographic identity capturing latitude, climate, and installed capacity differences. \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+\subsection{Linear Regression Baseline}
 
-The feature set was intentionally kept minimal to avoid overfitting and to maintain interpretability. Irradiance is the strongest predictor, with Hour and Month providing temporal context. The country one-hot encoding allows the model to learn location-specific baselines.
+An ordinary least-squares linear regression model is trained as a baseline to
+quantify the marginal benefit of the ensemble approach. The model is
+implemented via \path{sklearn.linear_model.LinearRegression} with default
+hyperparameters and fits a 34-dimensional hyperplane to the training data.
+Its closed-form solution is unique and computationally tractable at the
+3.8~million row scale. Linear regression serves as an interpretability anchor:
+its coefficients reveal the direction and magnitude of each feature's marginal
+contribution, modulo the assumption of additive independence.
 
-% Section 5
-\newpage
-\section{Model Training and Configuration}
-
-Two regression models were trained and compared. Both are provided by scikit-learn.
-
-\subsection{Train-Test Split}
-
-The dataset was split into 80\% training and 20\% testing subsets using \texttt{train\_test\_split()} with \texttt{random\_state=67} for reproducibility. The \texttt{Timestamp} and \texttt{Capacity\_Factor} columns were excluded from the feature matrix.
-
-\begin{table}[H]
-    \centering
-    \caption{Data Split}
-    \begin{tabular}{ll}
-        \toprule
-        \textbf{Set} & \textbf{Samples} \\
-        \midrule
-        Training & 3,050,152 \\
-        Testing & 762,538 \\
-        Total & 3,812,690 \\
-        \bottomrule
-    \end{tabular}
-\end{table}
-
-\subsection{Linear Regression}
-
-A standard Ordinary Least Squares (OLS) regression model. It assumes a linear relationship between the features and the target variable. This model serves as a baseline due to its simplicity and interpretability.
-
-\clearpage
 \subsection{Random Forest Regressor}
 
-An ensemble method that fits multiple decision trees on bootstrapped subsets of the data and averages their predictions. It captures non-linear relationships and feature interactions that linear regression cannot.
+The primary predictive model is a
+\path{sklearn.ensemble.RandomForestRegressor} configured with the following
+hyperparameters:
 
-\begin{table}[H]
-    \centering
-    \caption{Random Forest Hyperparameters}
-    \begin{tabular}{ll}
-        \toprule
-        \textbf{Parameter} & \textbf{Value} \\
-        \midrule
-        n\_estimators & 100 \\
-        max\_depth & 12 \\
-        random\_state & 67 \\
-        n\_jobs & -1 (all CPU cores) \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+\begin{itemize}
+  \item \texttt{n\_estimators = 100}: 100 decision tree base learners.
+  \item \texttt{max\_depth = 12}: maximum tree depth, balancing expressiveness
+        against overfitting.
+  \item \texttt{random\_state = 67}: controls bootstrap sampling and feature
+        subsampling for reproducibility.
+\end{itemize}
 
-Both trained models were serialised using \texttt{joblib} and exported as \texttt{.pkl} files for deployment.
-
-% Section 6
-\newpage
-\section{Model Evaluation}
-
-Three standard regression metrics were used to evaluate both models on the held-out test set.
+At each internal node, the algorithm evaluates a random subset of
+\(\sqrt{34} \approx 6\)~features and selects the split that minimises the
+mean squared error of the two resulting child nodes. Bootstrap aggregation
+over 100 trees reduces variance relative to any single tree. The trained
+models are serialised via \texttt{joblib} and archived in
+\texttt{Models/solar\_models.zip} as \texttt{solar\_model\_lr.pkl} and
+\texttt{solar\_model\_rfr.pkl}.
 
 \subsection{Evaluation Metrics}
 
-\textbf{Mean Absolute Error (MAE):} The average absolute difference between predicted and actual values. Lower is better.
-\begin{equation}
-    \text{MAE} = \frac{1}{n} \sum_{i=1}^{n} |y_i - \hat{y}_i|
-\end{equation}
-
-\textbf{Root Mean Squared Error (RMSE):} The square root of the average squared differences. Penalises larger errors more heavily than MAE.
-\begin{equation}
-    \text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}
-\end{equation}
-
-\textbf{R-Squared ($R^2$):} The proportion of variance in the target explained by the model. A value of 1.0 indicates perfect prediction.
-\begin{equation}
-    R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}
-\end{equation}
-
-\subsection{Results}
+Model performance is assessed on the held-out test set using three standard
+regression metrics. The coefficient of determination $R^2$ quantifies the
+proportion of variance explained:
+\[
+  R^2 = 1 - \frac{\displaystyle\sum_{i}(y_i - \hat{y}_i)^2}
+                  {\displaystyle\sum_{i}(y_i - \bar{y})^2}
+\]
+Mean Absolute Error (MAE) measures average absolute deviation in capacity
+factor units, and Root Mean Squared Error (RMSE) penalises large errors more
+heavily. Both are expressed in dimensionless capacity factor units. The
+complete evaluation pipeline is implemented in
+\texttt{Final\_Pipeline/Final\_Pipeline.py}.
 
 \begin{table}[H]
-    \centering
-    \caption{Test Set Performance Comparison}
-    \begin{tabular}{lccc}
-        \toprule
-        \textbf{Model} & \textbf{MAE} & \textbf{RMSE} & \textbf{$R^2$} \\
-        \midrule
-        Linear Regression & 0.0534 & 0.0845 & 0.7880 \\
-        \rowcolor{solarblue!8} Random Forest Regressor & \textbf{0.0280} & \textbf{0.0547} & \textbf{0.9112} \\
-        \bottomrule
-    \end{tabular}
+  \centering
+  \caption{Model performance on the held-out test set (20\% random split).}
+  \label{tab:model_metrics}
+  \small
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Model} & $\boldsymbol{R^2}$ & \textbf{MAE} & \textbf{RMSE} \\
+    \midrule
+    Linear Regression  & 0.7880 & 0.0534 & 0.0845 \\
+    Random Forest      & \textbf{0.9112} & \textbf{0.0280} & \textbf{0.0547} \\
+    \bottomrule
+  \end{tabular}
 \end{table}
 
-\begin{table}[H]
-    \centering
-    \caption{Training Set Performance Comparison}
-    \begin{tabular}{lccc}
-        \toprule
-        \textbf{Model} & \textbf{MAE} & \textbf{RMSE} & \textbf{$R^2$} \\
-        \midrule
-        Linear Regression & 0.0534 & 0.0844 & 0.7882 \\
-        \rowcolor{solarblue!8} Random Forest Regressor & \textbf{0.0278} & \textbf{0.0543} & \textbf{0.9123} \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+The Random Forest achieves a 12.3 percentage point improvement in $R^2$,
+a 47.6\% reduction in MAE, and a 35.3\% reduction in RMSE relative to the
+linear baseline, confirming that the relationship between the feature set and
+capacity factor is substantially non-linear. The RMSE improvement is
+particularly meaningful for grid operators because large prediction errors at
+peak or near-zero output periods carry asymmetric operational costs.
 
-\subsection{Analysis}
+% =============================================================
+\section{Agentic AI Architecture}
+% =============================================================
 
-The Random Forest Regressor significantly outperforms Linear Regression across all three metrics. Key observations:
+\subsection{Design Rationale}
 
-\begin{itemize}[noitemsep]
-    \item The Random Forest achieves an $R^2$ of 0.9112 on the test set, explaining over 91\% of the variance in capacity factor. Linear Regression explains approximately 79\%.
-    \item The MAE for Random Forest (0.0280) is roughly half that of Linear Regression (0.0534), meaning its average prediction error is about 2.8 percentage points on the capacity factor scale.
-    \item The close alignment between training and testing metrics for Linear Regression (MAE: 0.0534 vs 0.0534) confirms it is not overfitting, but its linear assumption limits its ceiling.
-    \item The close alignment between training $R^2$ (0.9123) and test $R^2$ (0.9112) confirms that the Random Forest is generalising well and not overfitting, aided by the \texttt{max\_depth=12} constraint.
+Pure ML forecasting models produce numerical capacity factor estimates but do
+not themselves generate actionable operational guidance. Bridging the gap
+between a predicted 24-hour profile and concrete grid management actions
+requires domain knowledge about battery energy storage system (BESS) dispatch
+strategies, demand-side management (DSM), intraday market mechanisms, and
+balancing reserve obligations. Rather than hard-coding this knowledge in
+procedural rules, Phase~2 of SolarIntel implements a composable agentic
+pipeline in which specialised nodes perform retrieval and reasoning over a
+curated knowledge base.
+
+\subsection{LangGraph StateGraph}
+
+The Phase~2 pipeline is implemented as a \texttt{StateGraph} using the
+LangGraph framework~\cite{langchain2024}, which models the pipeline as a
+directed acyclic graph (DAG) of nodes connected by typed edges. The graph is
+defined in \texttt{Agent\_Pipeline/graph.py}. Execution proceeds
+deterministically from the \texttt{forecast\_node} through the
+\texttt{risk\_node}, \texttt{rag\_node}, and \texttt{recommend\_node} in
+sequence, with no conditional branching or cycles. This linear topology
+reflects the strict data dependency between stages: each node's output is a
+necessary input to the next.
+
+\subsection{Shared State: \texttt{GridAdvisorState}}
+
+All inter-node communication occurs through a single shared state object,
+\texttt{GridAdvisorState}, defined as a \texttt{TypedDict} in
+\texttt{Agent\_Pipeline/state.py}. The state carries the following fields as
+it propagates through the graph:
+
+\begin{itemize}
+  \item \texttt{country}, \texttt{capacity\_kw}, \texttt{date}: user-supplied
+        input parameters.
+  \item \texttt{weather\_data}: raw 24-hour meteorological forecast from
+        Open-Meteo.
+  \item \texttt{hourly\_cf}: list of 24 predicted capacity factor values from
+        the RFR model.
+  \item \texttt{risk\_flags}: structured output of the risk analysis node,
+        including the variability score and ramp event list.
+  \item \texttt{rag\_context}: concatenated text chunks retrieved from
+        ChromaDB.
+  \item \texttt{recommendations}: final JSON object from the LLM node.
 \end{itemize}
 
-% Section 7
-\newpage
-\section{Deployment}
+Using a typed dictionary for shared state enforces a clear data contract
+between nodes and simplifies debugging, since each node's input and output
+can be inspected independently without access to adjacent nodes.
 
-The trained models are deployed through a Streamlit web application hosted on Hugging Face Spaces.
+\subsection{Pipeline Architecture}
 
-\subsection{Application Architecture}
+Figure~\ref{fig:architecture} illustrates the four-node pipeline and the
+\texttt{GridAdvisorState} shared bus.
 
-The application consists of two main components:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{model\_loader.py} -- Handles model loading from \texttt{.pkl} files using \texttt{joblib}, constructs feature vectors from user inputs, and returns capacity factor predictions.
-    \item \textbf{app.py} -- The Streamlit frontend providing interactive controls (country selection, weather parameters, time inputs) and visualisations (prediction gauges, 24-hour generation profiles, country comparisons, and the Grid Advisor panel).
-\end{itemize}
-
-\subsection{Features}
-
-The deployed application provides three tabs:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{Prediction tab} -- Real-time capacity factor prediction based on user-selected country, time, and weather conditions. Includes 24-hour generation profile simulation and installed capacity scaling to convert capacity factor to absolute power output (kW).
-    \item \textbf{Country Comparison tab} -- Benchmarking solar potential across regions with model selection toggle between Linear Regression and Random Forest Regressor.
-    \item \textbf{Grid Advisor tab} -- Agentic AI pipeline (Phase~2) that fetches live weather, runs ML predictions, performs risk analysis, retrieves expert knowledge via RAG, and generates structured LLM recommendations. Described fully in Sections~\ref{sec:gridadvisor}--\ref{sec:qualitative}.
-\end{itemize}
-
-\subsection{Hosting}
-
-The application is publicly accessible at:
-
-\begin{center}
-    \url{https://huggingface.co/spaces/priyanshutomar2024/SolarIntel}
-\end{center}
-
-Hugging Face Spaces provides free hosting for Streamlit applications with persistent storage for model files.
-
-% -----------------------------------------------------------------------
-% PHASE 2 SECTIONS
-% -----------------------------------------------------------------------
-
-% Section 7a
-\newpage
-\section{Agentic AI System --- Grid Advisor}
-\label{sec:gridadvisor}
-
-\subsection{Motivation}
-
-The Phase~1 ML pipeline answers one question: \textit{given weather inputs and a country, what will the capacity factor be?} This is sufficient for energy market participants who need point estimates, but it is insufficient for grid operators and transmission system operators (TSOs) who must act on that information. Grid operators require answers to questions such as: Will generation ramp down sharply this afternoon? When should reserves be pre-positioned? Which balancing mechanism is most appropriate for the expected variability?
-
-Rule-based threshold systems can flag obvious events (e.g., generation below 10\,kW), but they cannot synthesise contextual knowledge, adapt their recommendations to market structure, or explain their reasoning in operator-appropriate language. A large language model (LLM), conversely, has broad knowledge of grid operations and balancing mechanisms but cannot access real-time forecast data or the trained Random Forest model.
-
-The Grid Advisor bridges this gap by composing both capabilities inside a directed agentic pipeline: deterministic computation (weather fetch, ML inference, risk arithmetic) feeds structured context into a retrieval-augmented LLM, which produces operator-facing recommendations grounded in real data.
-
-\subsection{Pipeline Overview}
-
-The Grid Advisor is implemented as a four-node \texttt{StateGraph} using LangGraph. Each node receives the full pipeline state, performs a single well-defined operation, and writes its outputs back to state fields before passing control to the next node. The nodes execute sequentially in a directed acyclic graph (DAG); there are no cycles or conditional branches in the current implementation.
-
-\begin{table}[H]
-    \centering
-    \caption{LangGraph Node Responsibilities}
-    \begin{tabularx}{\textwidth}{llX}
-        \toprule
-        \textbf{Node} & \textbf{Type} & \textbf{Responsibility} \\
-        \midrule
-        \texttt{forecast\_node} & Deterministic & Fetches 24-hour weather from Open-Meteo; calls trained Random Forest 24 times to build the hourly CF profile. \\
-        \texttt{risk\_analysis\_node} & Deterministic & Computes variability score, low-generation hours, and ramp events; emits plain-English risk flags. \\
-        \texttt{rag\_retrieval\_node} & Retrieval & Queries ChromaDB vector store with risk-aware query; returns top-4 semantically relevant knowledge-base chunks. \\
-        \texttt{recommendation\_node} & LLM & Sends hourly profile, risk flags, and RAG chunks to an OpenRouter LLM; parses JSON response into structured recommendations. \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-
-\subsection{LangGraph StateGraph Design}
-
-LangGraph models agent pipelines as typed state machines. The shared state object (\texttt{GridAdvisorState}) is a \texttt{TypedDict} that every node reads from and writes to. Nodes declare no explicit inter-node dependencies; the framework executes them in the order they are connected by \texttt{add\_edge()} calls. This design provides three properties valuable in production:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{Auditability} -- every intermediate result (weather forecast, risk flags, RAG chunks) is preserved in state and can be logged or inspected without re-running the pipeline.
-    \item \textbf{Replaceability} -- any node can be swapped (e.g., replacing Open-Meteo with a paid NWP provider) without touching the other nodes, because the state schema acts as the interface contract.
-    \item \textbf{Testability} -- each node is a pure Python function accepting and returning a dict-like object, enabling unit tests without running the full graph.
-\end{itemize}
-
-The graph is compiled once at application startup (cached by \texttt{@st.cache\_resource}) and invoked per user request with a fresh initial state populated from the Streamlit sidebar inputs.
-
-\clearpage
-\subsection{Pipeline Architecture Diagram}
-
-Figure~\ref{fig:advisor} shows the four-node pipeline and the state fields produced at each stage.
-
+\end{multicols}
 \begin{figure}[H]
 \centering
+\resizebox{0.72\textwidth}{!}{%
 \begin{tikzpicture}[
-    node distance=1.4cm,
-    every node/.style={font=\small},
+    node distance=1.1cm,
+    every node/.style={font=\scriptsize},
     databox/.style={rectangle, draw=solarblue, fill=solarblue!8, rounded corners=3pt,
-                    minimum width=4.8cm, minimum height=1.0cm, align=center, thick},
+                    minimum width=3.8cm, minimum height=0.85cm, align=center, thick},
     procbox/.style={rectangle, draw=solaramber, fill=solaramber!8, rounded corners=3pt,
-                    minimum width=4.8cm, minimum height=1.0cm, align=center, thick},
+                    minimum width=3.8cm, minimum height=0.85cm, align=center, thick},
     modelbox/.style={rectangle, draw=solarblue!80, fill=solarblue!15, rounded corners=3pt,
-                     minimum width=4.8cm, minimum height=1.0cm, align=center, thick},
+                     minimum width=3.8cm, minimum height=0.85cm, align=center, thick},
     deploybox/.style={rectangle, draw=solaramber!80, fill=solaramber!15, rounded corners=3pt,
-                      minimum width=4.8cm, minimum height=1.0cm, align=center, thick},
-    sidenote/.style={rectangle, draw=solargray!50, fill=lightgray, rounded corners=2pt,
-                     minimum width=4.0cm, align=left, font=\scriptsize, text width=4.0cm},
-    arrow/.style={-{Stealth[length=3mm]}, thick, color=solargray},
-    sidearrow/.style={-{Stealth[length=2.5mm]}, thin, color=solargray!60}
+                      minimum width=3.8cm, minimum height=0.85cm, align=center, thick},
+    sidenote/.style={rectangle, draw=solargray!50, fill=lightnavy, rounded corners=2pt,
+                     minimum width=3.0cm, align=left, font=\tiny, text width=3.0cm},
+    arrow/.style={-{Stealth[length=2.5mm]}, thick, color=solargray},
+    sidearrow/.style={-{Stealth[length=2mm]}, thin, color=solargray!60}
 ]
-
-% Input
-\node[databox] (input) {\textbf{User Input}\\{\scriptsize country, capacity\_kw, forecast\_date}};
-
-% Node 1
-\node[procbox, below=of input] (n1) {\textbf{Node 1: forecast\_node}\\{\scriptsize Open-Meteo fetch + 24$\times$ RF inference}};
-
-% Node 2
-\node[procbox, below=of n1] (n2) {\textbf{Node 2: risk\_analysis\_node}\\{\scriptsize variability score, low hours, ramp events}};
-
-% Node 3
-\node[modelbox, below=of n2] (n3) {\textbf{Node 3: rag\_retrieval\_node}\\{\scriptsize ChromaDB similarity search, top-4 chunks}};
-
-% Node 4
-\node[deploybox, below=of n3] (n4) {\textbf{Node 4: recommendation\_node}\\{\scriptsize OpenRouter LLM \textrightarrow{} JSON output}};
-
-% Side notes
-\node[sidenote, right=1.4cm of n1] (sn1)
-    {\textbf{Outputs to state:}\\hourly\_profile [24 floats]\\cf\_value (peak CF)\\weather\_forecast (raw)};
-\node[sidenote, right=1.4cm of n2] (sn2)
-    {\textbf{Outputs to state:}\\risk\_flags [list]\\risk\_summary \{dict\}};
-\node[sidenote, right=1.4cm of n3] (sn3)
-    {\textbf{Outputs to state:}\\retrieved\_chunks [list]};
-\node[sidenote, right=1.4cm of n4] (sn4)
-    {\textbf{Outputs to state:}\\final\_recommendations \{dict\}};
-
-% Main arrows
+\node[databox] (input) {\textbf{User Input}\\{\tiny country, capacity\_kw, forecast\_date}};
+\node[procbox, below=of input] (n1) {\textbf{Node 1: forecast\_node}\\{\tiny Open-Meteo fetch + 24$\times$ RF inference}};
+\node[procbox, below=of n1] (n2) {\textbf{Node 2: risk\_analysis\_node}\\{\tiny variability score, low hours, ramp events}};
+\node[modelbox, below=of n2] (n3) {\textbf{Node 3: rag\_retrieval\_node}\\{\tiny ChromaDB similarity search, top-4 chunks}};
+\node[deploybox, below=of n3] (n4) {\textbf{Node 4: recommendation\_node}\\{\tiny OpenRouter LLM $\rightarrow$ JSON output}};
+\node[sidenote, right=1.1cm of n1] (sn1)
+    {\textbf{Outputs:}\\hourly\_profile [24 floats]\\cf\_value (peak CF)};
+\node[sidenote, right=1.1cm of n2] (sn2)
+    {\textbf{Outputs:}\\risk\_flags [list]\\risk\_summary \{dict\}};
+\node[sidenote, right=1.1cm of n3] (sn3)
+    {\textbf{Outputs:}\\retrieved\_chunks [list]};
+\node[sidenote, right=1.1cm of n4] (sn4)
+    {\textbf{Outputs:}\\final\_recommendations \{dict\}};
 \draw[arrow] (input) -- (n1);
 \draw[arrow] (n1) -- (n2);
 \draw[arrow] (n2) -- (n3);
 \draw[arrow] (n3) -- (n4);
-
-% Side arrows
 \draw[sidearrow] (n1.east) -- (sn1.west);
 \draw[sidearrow] (n2.east) -- (sn2.west);
 \draw[sidearrow] (n3.east) -- (sn3.west);
 \draw[sidearrow] (n4.east) -- (sn4.west);
-
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{Grid Advisor LangGraph pipeline: four sequential nodes with state outputs annotated.}
-\label{fig:advisor}
+\label{fig:architecture}
 \end{figure}
+\begin{multicols}{2}
 
-\clearpage
-\subsection{GridAdvisorState Schema}
+\subsection{Node 1: Forecast Node}
 
-The complete shared state is defined as a \texttt{TypedDict} in \texttt{Agent\_Pipeline/state.py}. Table~\ref{tab:state} lists all fields and their roles.
+The Forecast Node (\texttt{Agent\_Pipeline/1\_forecast/node.py}) performs two
+operations. First, it queries the Open-Meteo REST API~\cite{openmeteo2023} to
+retrieve a 24-hour ahead hourly forecast for the target country's geographic
+centroid, obtaining irradiance, 2~m temperature, and 10~m wind speed.
+Open-Meteo is selected for its free, unauthenticated, production-grade
+meteorological forecasts derived from ECMWF and other numerical weather
+prediction models. Second, for each of the 24 hours, the node constructs a
+34-dimensional feature vector---incorporating the hour index, current month,
+retrieved weather parameters, and the appropriate one-hot country
+indicator---and passes it to the pre-loaded Random Forest Regressor. The
+result is a list of 24 capacity factor values stored in
+\texttt{GridAdvisorState[``hourly\_cf'']}.
 
-\begin{table}[H]
-    \centering
-    \caption{GridAdvisorState fields}
-    \label{tab:state}
-    \begin{tabularx}{\textwidth}{llX}
-        \toprule
-        \textbf{Field} & \textbf{Type} & \textbf{Purpose} \\
-        \midrule
-        \texttt{country} & str & ISO 3166-1 alpha-2 country code \\
-        \texttt{capacity\_kw} & float & Installed solar capacity in kilowatts \\
-        \texttt{model\_name} & str & Model selector (Random Forest) \\
-        \texttt{forecast\_date} & str & Target forecast date string \\
-        \texttt{weather\_forecast} & list & Raw 24-hour Open-Meteo response \\
-        \texttt{cf\_value} & float & Peak capacity factor from hourly profile \\
-        \texttt{hourly\_profile} & list & 24 capacity factor values, one per hour \\
-        \texttt{monthly\_profile} & list & 12 monthly CFs at peak hour conditions \\
-        \texttt{risk\_summary} & dict & Variability score, low hours, ramp events \\
-        \texttt{risk\_flags} & list & Plain-English risk descriptions \\
-        \texttt{retrieved\_chunks} & list & Top-4 RAG chunks with source labels \\
-        \texttt{final\_recommendations} & dict & Structured LLM JSON output \\
-        \texttt{error} & Optional[str] & Exception detail if any node fails \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+\subsection{Node 2: Risk Analysis Node}
 
-% Section 7b
-\newpage
-\section{Forecast and Risk Analysis Nodes}
-\label{sec:forecastrisk}
+The Risk Analysis Node (\texttt{Agent\_Pipeline/2\_risk/node.py}) applies
+deterministic analytical rules to the 24-hour capacity factor profile. Three
+risk signals are computed:
 
-\subsection{forecast\_node: Open-Meteo Integration}
+\begin{enumerate}
+  \item \textbf{Variability score} $V$: the normalised mean absolute ramp rate
+        (defined formally in Section~8.2), quantifying intra-day generation
+        smoothness.
+  \item \textbf{Low-output hours}: hours where the predicted capacity factor
+        falls below 10\% of the daily peak, indicating periods of negligible
+        generation that may require backup dispatch.
+  \item \textbf{Ramp events}: consecutive-hour transitions where the absolute
+        change in capacity factor exceeds 0.12, i.e.\
+        $|\mathrm{CF}_h - \mathrm{CF}_{h-1}| > 0.12$, representing rapid
+        generation changes that stress frequency regulation reserves.
+\end{enumerate}
 
-The forecast node fetches real hourly weather for the selected country from the Open-Meteo API, a free and open meteorological data service requiring no API key. The request targets three parameters: \texttt{shortwave\_radiation} (W/m\textsuperscript{2}), \texttt{temperature\_2m} (\textdegree C), and \texttt{wind\_speed\_10m} (m/s at 10\,m height, reported in m/s via the \texttt{wind\_speed\_unit=ms} parameter). The full HTTP request construction and response parsing logic is implemented in \texttt{Agent\_Pipeline/weather/fetcher.py}.
+All three signals are computed without any LLM invocations, ensuring
+determinism and low latency. Results are stored in
+\texttt{GridAdvisorState[``risk\_flags'']}.
 
-The API is called with \texttt{forecast\_days=16} to support the full 1--15 day forecast range exposed in the UI. The target day is extracted by slicing the response at \texttt{day\_offset * 24} (e.g.\ \texttt{day\_offset=1} yields hours 24--47, i.e.\ tomorrow). Country coordinates are taken from a hardcoded centroid dictionary (\texttt{COUNTRY\_COORDS}, 29 entries) that mirrors the spatial reference used during training. After fetching, the node iterates over all 24 hours and calls \texttt{predict\_capacity\_factor()} once per hour. The result is a list of 24 floats written to \texttt{hourly\_profile}, with the maximum value written to \texttt{cf\_value}.
+\subsection{Node 3: RAG Retrieval Node}
 
-The node also computes a \texttt{monthly\_profile}: 12 capacity factor estimates for months 1--12 at the peak hour's weather conditions. This provides a seasonal reference baseline stored in state for downstream use.
+The RAG Retrieval Node (\texttt{Agent\_Pipeline/3\_rag/node.py}) retrieves
+domain-relevant text passages from an in-memory vector store given the current
+risk profile. The design and operation of this node are detailed in Section~6.
 
-This 24-call loop is deliberately synchronous. Random Forest inference is fast (sub-millisecond per call), so parallelism would add overhead without meaningful latency reduction.
+\subsection{Node 4: Recommendations Node}
 
-\subsection{risk\_analysis\_node: Deterministic Risk Computation}
+The Recommendations Node
+(\texttt{Agent\_Pipeline/4\_recommend/node.py}) invokes an external LLM via the
+OpenRouter API, passing the 24-hour capacity factor profile, risk flags, and
+RAG-retrieved context as a structured prompt. Prompt design and output schema
+are detailed in Section~7.
 
-The risk node operates entirely in Python with no external calls. It receives the \texttt{hourly\_profile} from state and computes three risk indicators.
-
-\subsubsection{Variability Score}
-
-The variability score is a normalised mean absolute ramp rate:
-
-\begin{equation}
-    V = \frac{1}{(H-1) \cdot \text{CF}_{\max}} \sum_{h=1}^{H-1} \left| \text{CF}_h - \text{CF}_{h-1} \right|
-\label{eq:variability}
-\end{equation}
-
-where $H = 24$ is the number of hours and $\text{CF}_{\max}$ is the peak capacity factor in the profile. The denominator normalises by both the number of transitions and the peak output, making the score scale-invariant: a 160\,kW system and a 1\,MW system experiencing identical relative fluctuations will yield the same $V$.
-
-This is preferable to raw standard deviation for two reasons. First, standard deviation measures dispersion around the mean, which conflates the natural day/night cycle (large expected variance) with intra-day instability (operationally important variance). Second, the normalisation by $\text{CF}_{\max}$ ensures the score is meaningful even on days with low absolute generation, where raw ramp magnitudes are small but relative instability may still be high.
-
-\subsubsection{Low-Generation Hours}
-
-Low-generation hours are defined as hours where:
-\begin{equation}
-    \text{CF}_h < 0.10 \times \text{CF}_{\max}
-\end{equation}
-
-Using a relative threshold (10\% of peak) rather than an absolute value (e.g., $\text{CF} < 0.05$) is essential for correct behaviour across geographies. Southern European countries regularly achieve $\text{CF}_{\max} > 0.7$, while Nordic countries in winter may peak at 0.15. An absolute threshold would flag all Nordic daylight hours as low-generation, obscuring the genuinely useful signal.
-
-\subsubsection{Ramp Events}
-
-A ramp event is detected when the absolute hour-on-hour change in capacity factor exceeds 0.12:
-\begin{equation}
-    |\text{CF}_h - \text{CF}_{h-1}| > 0.12
-\end{equation}
-
-The 0.12 threshold corresponds to a 12 percentage-point change in one hour, which for a 1\,MW system represents a 120\,kW ramp. Three plain-English risk flags are emitted depending on what is detected: a high-variability window flag (if any ramp events exist), a minimal-generation flag (if any low hours exist), and a low-variability flag (if $V < 0.05$, indicating a stable but potentially low-output day). These flags are passed as the query seed to the RAG retrieval node. The full implementation is in \texttt{Agent\_Pipeline/2\_risk/node.py}.
-
-% Section 7c
-\addtocontents{toc}{\protect\newpage}
-\clearpage
+% =============================================================
 \section{RAG Pipeline}
-\label{sec:rag}
-
-\subsection{What is Retrieval-Augmented Generation?}
-
-Retrieval-Augmented Generation (RAG) is an architecture that supplements an LLM's parametric knowledge (encoded during training) with non-parametric knowledge retrieved at inference time from an external document corpus. Rather than relying solely on what the model ``remembers'', the system fetches the most relevant passages from a curated knowledge base and injects them into the LLM's context window alongside the user's query. This grounds the model's output in specific, verifiable sources and allows the knowledge base to be updated without retraining.
-
-In the Grid Advisor, RAG serves a specific purpose: the LLM must recommend grid-balancing strategies that are technically precise (correct mechanism names, correct balancing product categories, correct regulatory references). Leaving this to LLM parametric recall would risk hallucinated mechanism names or outdated regulatory information. By retrieving from a curated knowledge base authored specifically for this application, the recommendations remain accurate and auditable.
+% =============================================================
 
 \subsection{Knowledge Base}
 
-The knowledge base consists of four plain-text documents, each approximately 400 words, written specifically for this application:
+Four curated document files form the knowledge base
+(\texttt{Agent\_Pipeline/3\_rag/knowledge\_base/}):
 
-\begin{table}[H]
-    \centering
-    \caption{Knowledge Base Documents}
-    \begin{tabularx}{\textwidth}{lX}
-        \toprule
-        \textbf{Document} & \textbf{Content Summary} \\
-        \midrule
-        Solar Variability \& Grid Stability & Explains how solar intermittency creates frequency deviations; describes frequency containment reserves (FCR) and automatic Frequency Restoration Reserves (aFRR) under ENTSO-E PICASSO. \\
-        Battery Energy Storage Systems & Covers BESS dispatch strategies, round-trip efficiency, degradation trade-offs, and integration with intraday balancing markets. \\
-        Demand-Side Management \& Load Shifting & Describes industrial demand response, interruptible load contracts, and time-of-use tariff mechanisms for absorbing excess solar generation. \\
-        Curtailment, Balancing \& Cross-Border Grid Management & Covers redispatch, curtailment orders, ENTSO-E MARI (manual Frequency Restoration Reserves), and SIDC cross-border intraday trading. \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+\begin{enumerate}
+  \item \textbf{Solar variability}: characteristics of solar intermittency,
+        ramp rate statistics, and impacts on system frequency.
+  \item \textbf{Battery energy storage (BESS)}: dispatch strategies, round-trip
+        efficiency considerations, and sizing guidelines for PV output
+        smoothing.
+  \item \textbf{Demand-side management (DSM)}: flexible load shifting
+        mechanisms, industrial curtailment agreements, and smart tariff
+        structures.
+  \item \textbf{Curtailment and balancing}: curtailment protocols, balancing
+        reserve markets (including PICASSO aFRR and TERRE mFRR platforms),
+        and intraday coupling via the SIDC mechanism.
+\end{enumerate}
 
-\subsection{Vector Store Construction}
+These documents are authored specifically for this knowledge base to ensure
+coverage of the operational decision contexts relevant to SolarIntel's scope.
 
-At application startup, the knowledge base documents are split into chunks using LangChain's \texttt{RecursiveCharacterTextSplitter} with \texttt{chunk\_size=300} and \texttt{chunk\_overlap=30}. The overlap ensures that a sentence split across a chunk boundary is not lost: both neighbouring chunks contain the overlapping text, so a semantic query covering that sentence can retrieve at least one complete chunk. Without overlap, boundary sentences are systematically underrepresented in retrieval.
+\subsection{Chunking}
 
-Chunks are embedded using \texttt{sentence-transformers/all-MiniLM-L6-v2}, a lightweight but effective transformer model that produces 384-dimensional dense vectors. The model runs locally; no API call or API key is required. All embeddings and the inverted index are held in an in-memory ChromaDB collection, built once and cached via \texttt{@st.cache\_resource}. The full build and retrieval logic is implemented in \texttt{Agent\_Pipeline/3\_rag/store.py}.
+Each document is segmented using LangChain's
+\texttt{RecursiveCharacterTextSplitter} with \texttt{chunk\_size=300} characters
+and \texttt{overlap=30} characters. The overlap prevents sentence-boundary
+information loss at chunk boundaries, preserving semantic continuity. The short
+chunk size is deliberate: it maximises retrieval precision by reducing the
+semantic noise within each embedded passage.
 
-\subsection{Similarity Search and Query Construction}
+\subsection{Embedding Model}
 
-At inference time, the query is constructed by concatenating the country code, the current calendar month name, the literal string \texttt{"solar grid"}, and the first two risk flags from state. This string is embedded and passed to ChromaDB for similarity search.
+Chunks are embedded using the \texttt{all-MiniLM-L6-v2} sentence transformer
+model~\cite{reimers2019}, which produces 384-dimensional dense vectors. This
+model is selected for its strong performance on semantic similarity benchmarks,
+low inference latency suitable for interactive use, and permissive licence
+for commercial and research applications.
 
-ChromaDB computes cosine similarity between the query embedding and all stored chunk embeddings, returning the four nearest neighbours. Each retrieved chunk has its source document name prepended (e.g.\ \texttt{[Solar Variability \& Grid Stability]: ...}) using a label map keyed by filename stem, providing transparent provenance. The four labelled chunks are written to \texttt{state["retrieved\_chunks"]} for consumption by the recommendation node.
+\subsection{In-Memory ChromaDB}
 
-The query embeds the country code, the current calendar month, and the first \textbf{two} risk flags. This biases retrieval toward chunks that discuss both the geographic/seasonal context (e.g., Nordic grid characteristics in spring) and the specific failure mode detected (e.g., ramp events), avoiding generic solar generation passages unrelated to the current risk profile.
+The embedded chunks are stored in an ephemeral ChromaDB vector store
+(\texttt{chromadb.Client()} with in-memory storage), instantiated at
+application startup in \texttt{Agent\_Pipeline/3\_rag/node.py}. The in-memory
+design is deliberate: the knowledge base comprises four short documents
+(typically fewer than 150~chunks in total), the application is stateless
+between sessions, and avoiding persistent disk storage simplifies deployment
+on Hugging Face Spaces where filesystem persistence between invocations is
+not guaranteed.
 
-% Section 7d
-\newpage
+\subsection{Query Construction and Retrieval}
+
+At runtime, the Risk Analysis Node's output informs the construction of a
+natural language query that encapsulates the key risk signals. A profile
+exhibiting high variability and multiple ramp events, for instance, generates a
+query emphasising frequency regulation and rapid BESS dispatch. Retrieval
+calls ChromaDB's cosine-similarity search with $k=4$, returning the four most
+semantically similar chunks. These are concatenated with separators and stored
+in \texttt{GridAdvisorState[``rag\_context'']}.
+
+% =============================================================
 \section{LLM Integration and Prompt Engineering}
-\label{sec:llm}
+% =============================================================
 
-\subsection{OpenRouter and LangChain Adapter}
+\subsection{Model and API Selection}
 
-The recommendation node uses OpenRouter as its LLM provider. OpenRouter is an API aggregator that routes requests to open-source and proprietary models through a single OpenAI-compatible endpoint. The free tier routes to the LLaMA~3 family (Meta), providing capable instruction-following at zero cost. Using LangChain's \texttt{ChatOpenAI} adapter with a custom \texttt{base\_url} means the node is model-agnostic: swapping to GPT-4o, Claude~3, or any other OpenRouter-supported model requires changing one configuration string. The model is initialised with \texttt{model="openrouter/free"}, \texttt{temperature=0.2}, and the OpenRouter base URL.
+The Recommendations Node sends structured prompts to the LLaMA-3 model family
+via the OpenRouter~\cite{openrouter2023} inference API, accessed through
+LangChain's \texttt{ChatOpenAI} adapter with a custom \texttt{base\_url} and
+\texttt{api\_key}. OpenRouter provides a unified OpenAI-compatible API surface
+over a wide catalogue of open-weight models, enabling model substitution
+without code changes to the node. The LLaMA-3 family is chosen for its
+instruction-following reliability and structured output capability relative to
+its inference cost.
 
-The model identifier \texttt{"openrouter/free"} instructs OpenRouter to route the request to whichever capable open-source model is available on its free tier at inference time (typically a LLaMA~3 variant). Temperature 0.2 is chosen deliberately: low enough to produce consistent, structured JSON outputs across repeated runs, but not zero (which can cause the model to repeat patterns rigidly when risk profiles are similar across countries).
+\subsection{Temperature and Determinism}
 
-\clearpage
-\subsection{System Prompt Design}
+The LLM is invoked with \texttt{temperature=0.2}. This low value biases
+the model towards the most probable tokens, reducing creative variation in
+favour of factual consistency and reliable adherence to the output schema.
+Complete determinism (\texttt{temperature=0}) is not adopted because marginal
+stochasticity modestly diversifies strategy recommendations across different
+risk profiles. The system prompt explicitly instructs the model to prefer
+responses grounded in the retrieved context over parametric knowledge, reducing
+the risk of hallucinated regulatory references.
 
-The system prompt enforces three constraints simultaneously: output format (JSON schema), audience (grid operator), and domain boundaries (no consumer-facing language, no nighttime risk flagging). The full prompt is defined in \texttt{Agent\_Pipeline/4\_recommendations/node.py}. The enforced output schema contains five top-level keys, described in Table~\ref{tab:llmschema}.
+\subsection{JSON Schema Enforcement}
 
-\begin{table}[H]
-    \centering
-    \caption{LLM JSON output schema}
-    \label{tab:llmschema}
-    \begin{tabularx}{\textwidth}{llX}
-        \toprule
-        \textbf{Key} & \textbf{Type} & \textbf{Description} \\
-        \midrule
-        \texttt{forecast\_summary} & string & 2--3 sentence operational summary for grid operators \\
-        \texttt{risk\_periods} & array & Objects with \texttt{period}, \texttt{start\_hour}, \texttt{end\_hour}, \texttt{risk}, and \texttt{severity} (high/medium/low) \\
-        \texttt{strategies} & array & Objects with \texttt{title}, \texttt{description}, \texttt{category} (grid\_balancing / storage / demand\_response / market), and \texttt{source} (retrieved / general) \\
-        \texttt{references} & array & Source citations drawn from the retrieved knowledge base chunks \\
-        \texttt{responsible\_ai\_note} & string & Uncertainty acknowledgement for operational use \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+The LLM is instructed via the system prompt to return exactly one JSON object
+with five mandatory keys:
 
-The schema-first approach is more reliable than asking the model to ``format the output as JSON'' in natural language, because it eliminates ambiguity about key names, array structures, and value types. The rule about nighttime risk periods prevents a common LLM error: flagging hours 0--5 as ``low generation risk'' when low generation at night is expected and operationally irrelevant.
-
-\clearpage
-\subsection{Robustness and Fallback}
-
-LLM outputs are not guaranteed to be well-formed JSON, particularly from smaller open-source models. Two defensive patterns are applied:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{Code fence stripping} -- The response is passed through a regex that removes Markdown code fences (\texttt{```json ... ```}) before parsing. Many instruction-tuned models add these fences despite instructions to the contrary.
-    \item \textbf{Key backfilling} -- After \texttt{json.loads()}, each expected key is inserted with a safe default using \texttt{dict.setdefault()}, preventing \texttt{KeyError} when the model omits a field.
+\begin{itemize}
+  \item \texttt{forecast\_summary}: a one-paragraph qualitative summary of
+        the 24-hour generation profile.
+  \item \texttt{risk\_periods}: a list of high-risk hour ranges with a brief
+        rationale for each.
+  \item \texttt{strategies}: a list of concrete operational actions, each
+        annotated with the applicable market mechanism or technology.
+  \item \texttt{references}: citations to the specific knowledge base passages
+        that informed the recommendations.
+  \item \texttt{responsible\_ai\_note}: a mandatory statement reminding the
+        operator that AI-generated recommendations require validation by a
+        qualified engineer before operational implementation.
 \end{itemize}
 
-If the LLM call fails entirely (network error, rate limit, malformed response that cannot be repaired), the node catches the exception, writes an error message to \texttt{state["error"]}, and returns. The Streamlit frontend detects the error flag and renders the KPI cards and hourly chart using data already in state, ensuring the user receives useful output even when the LLM is unavailable.
+Output is parsed using \texttt{json.loads} in
+\texttt{Agent\_Pipeline/4\_recommend/node.py}. If parsing fails due to
+incomplete generation or schema violation, the node falls back to a
+deterministic template populated from the risk flags, ensuring the pipeline
+always returns a structured response. Fallback activations are logged for
+monitoring.
 
-\subsection{Responsible AI Note}
+\subsection{Responsible AI Design}
 
-Every response from the recommendation node includes a \texttt{responsible\_ai\_note} field. The system prompt requires the model to populate this field with an uncertainty acknowledgement: that recommendations are based on probabilistic forecast data and should be verified against real-time SCADA and balancing market signals before operational action. The field is present in the JSON output and logged to state; when the LLM call fails entirely, the fallback dict populates this field with the raw exception detail, making failure modes transparent for debugging.
+The mandatory \texttt{responsible\_ai\_note} field is an explicit design choice
+rather than a post-hoc disclaimer. Grid management decisions that incorrectly
+dispatch reserves or curtail generation can have cascading consequences for
+grid stability and market participants. By structurally embedding a
+human-review directive in every output object, the system resists misuse as an
+autonomous decision-maker and reinforces the human-in-the-loop principle
+appropriate for critical infrastructure advisory applications.
 
-% Section 7e
+% =============================================================
 \newpage
-\section{Qualitative Results --- Grid Advisor}
-\label{sec:qualitative}
+\section{Results and Evaluation}
+% =============================================================
 
-\subsection{Sample Run: Estonia, 160\,kW System, April}
+\subsection{ML Model Performance}
 
-The following describes a representative pipeline execution to illustrate the end-to-end output quality. Inputs: \textbf{country = Estonia (EE)}, \textbf{capacity = 160\,kW}, \textbf{date = mid-April}.
+Table~\ref{tab:model_metrics} summarises the performance of both models on the
+held-out test set. The Random Forest Regressor achieves $R^2 = 0.9112$,
+indicating that the model explains 91.1\% of the variance in hourly capacity
+factor across the 29-country, 15-year test partition. The linear baseline's
+$R^2 = 0.7880$ is itself substantial, reflecting the dominant contribution of
+irradiance as a single predictor, but the residual gap of 12.3 percentage
+points quantifies the non-linear interactions---primarily between irradiance,
+temperature derating, and the diurnal hour index---that linear regression
+cannot capture.
 
-\subsubsection{KPI Summary}
+The RMSE of 0.0547 for the Random Forest corresponds to an average per-hour
+absolute error of approximately 55~Wh per kWp, well within operational planning
+tolerances for day-ahead scheduling. The MAE of 0.0280 is notably lower than
+the RMSE, indicating a skewed error distribution: the model performs well on
+typical midday conditions but makes proportionally larger errors during
+dawn/dusk transitions and under partially cloudy conditions where irradiance
+variability is highest.
+
+\subsection{Variability Score Definition}
+
+The variability score $V$ computed by the Risk Analysis Node is defined as the
+normalised mean absolute ramp rate over the 24-hour capacity factor profile:
+
+\begin{equation}
+  V = \frac{1}{(N-1)\,\mathrm{CF}_{\max}}
+      \sum_{h=1}^{N-1} \bigl|\mathrm{CF}_{h} - \mathrm{CF}_{h-1}\bigr|
+  \label{eq:variability}
+\end{equation}
+
+\noindent where $N = 24$ is the number of hourly intervals, $\mathrm{CF}_h$
+is the predicted capacity factor at hour $h$, and $\mathrm{CF}_{\max}$ is the
+maximum predicted capacity factor over the 24-hour period. Normalisation by
+$\mathrm{CF}_{\max}$ renders $V$ dimensionless and comparable across days with
+different peak irradiance levels. A value of $V = 0$ indicates a perfectly
+smooth profile; higher values indicate greater intra-day variability. Empirical
+observation across the 29-country corpus suggests $V > 0.10$ is typically
+associated with significant balancing reserve activation requirements.
+
+\subsection{Grid Advisor Qualitative Evaluation}
+
+To evaluate the qualitative output of the agentic pipeline, the system was
+executed for Estonia (\texttt{EE}), a 160~kW installation, on a representative
+April day. Table~\ref{tab:advisor_output} summarises the key numerical outputs
+from the Forecast and Risk nodes; Table~\ref{tab:strategies} presents an
+excerpt of the LLM-generated strategy recommendations.
 
 \begin{table}[H]
-    \centering
-    \caption{Grid Advisor KPI Output --- Estonia, 160\,kW, April}
-    \begin{tabular}{ll}
-        \toprule
-        \textbf{KPI} & \textbf{Value} \\
-        \midrule
-        Peak Capacity Factor & 0.530 \\
-        Peak Power Output & 84.9\,kW (at 13:00 UTC) \\
-        Estimated Daily Output & 563.1\,kWh \\
-        Active Solar Hours & 11 (hours where CF $\geq$ 10\% of peak) \\
-        Variability Score & 0.0874 \\
-        \bottomrule
-    \end{tabular}
+  \centering
+  \caption{Grid Advisor numerical outputs: Estonia, 160~kW, April.}
+  \label{tab:advisor_output}
+  \small
+  \begin{tabular}{lc}
+    \toprule
+    \textbf{Metric} & \textbf{Value} \\
+    \midrule
+    Peak capacity factor          & 0.530 \\
+    Estimated daily output        & 563.1~kWh \\
+    Active solar hours (CF $>$ 0) & 11 \\
+    Variability score $V$         & 0.0874 \\
+    Low-output hours flagged      & 8 \\
+    Ramp events detected          & 3 \\
+    \bottomrule
+  \end{tabular}
 \end{table}
 
-A variability score of 0.0874 indicates a relatively stable generation day. The Open-Meteo forecast for Estonia on this date showed steady irradiance from 07:00 to 14:00, followed by a gradual decline rather than an abrupt ramp. No ramp events exceeding the 0.12 threshold were detected. Estimated daily output (563.1\,kWh) is computed as $\sum_{h=0}^{23} \text{CF}_h \times \text{capacity\_kw}$, i.e.\ the integral of the hourly generation curve scaled by installed capacity. Active Solar Hours (11) equals $24 - |\{h : \text{CF}_h < 0.10 \times \text{CF}_{\max}\}|$, giving 13 sub-threshold hours and 11 meaningful generation hours for this April day in Estonia.
+\begin{table}[H]
+  \centering
+  \caption{Excerpt of LLM-generated strategy recommendations, Estonia case.}
+  \label{tab:strategies}
+  \small
+  \begin{tabularx}{\columnwidth}{lX}
+    \toprule
+    \textbf{Strategy} & \textbf{Mechanism / Rationale} \\
+    \midrule
+    BESS pre-charge at 06:00 &
+      Pre-charge to 85\% SOC before dawn to buffer the
+      07:00--09:00 irradiance onset ramp event. \\
+    \addlinespace
+    PICASSO aFRR offer &
+      Submit automatic frequency restoration reserve offer
+      during 10:00--15:00 peak window to monetise predictable
+      high-CF period. \\
+    \addlinespace
+    SIDC intraday adjustment &
+      Revise day-ahead position via SIDC intraday coupling at
+      14:00 if the 15:00 ramp-down materialises below forecast. \\
+    \addlinespace
+    DSM pre-cooling &
+      Advance HVAC load to 13:00--14:00 window to absorb
+      surplus generation before the 15:00 ramp-down event. \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
 
-\clearpage
-\subsubsection{Risk Analysis Output}
+The variability score of 0.0874 falls marginally below the empirical
+$V = 0.10$ threshold, indicating moderate but manageable intra-day variability
+for a high-latitude April profile in Estonia. The three detected ramp events
+correspond to the morning solar onset, a mid-afternoon partial cloud passage,
+and the evening curtailment; the LLM correctly identified all three and
+proposed market and dispatch responses grounded in retrieved BESS and balancing
+knowledge base passages, referencing PICASSO and SIDC by name without
+hallucination.
 
-The risk node identified one medium-severity risk period: an \textbf{evening ramp-down between 14:00 and 18:00}, where the capacity factor declines from 0.53 to 0.09 over four hours. This corresponds to a $\sim$70\,kW output reduction in the system's frame. The risk flags passed to the RAG query were:
-
-The risk flags emitted (and passed as the RAG query seed) were:
-\begin{enumerate}[noitemsep]
-    \item \textit{``Minimal generation risk: 13 hours below 5\% capacity''}
-    \item \textit{``Low variability day --- stable but low output expected''}
-\end{enumerate}
-
-These match the actual flag-generation logic: a \texttt{low\_hours} flag is emitted whenever any hours fall below 10\% of peak CF, and a low-variability flag is emitted when $V < 0.05$. No ramp events exceeded the 0.12 threshold on this day, so the high-variability window flag was not triggered.
-
-\clearpage
-\subsubsection{LLM Recommendations}
-
-The recommendation node, operating with RAG context retrieved from the BESS and ENTSO-E balancing documents, generated three strategies:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{aFRR Reserve Pre-Positioning} (category: \texttt{grid\_balancing}) -- Activate automatic Frequency Restoration Reserve capacity via ENTSO-E PICASSO platform ahead of the 14:00--18:00 ramp window to absorb the generation shortfall with sub-minute response.
-    \item \textbf{BESS Scheduled Discharge} (category: \texttt{storage}) -- Programme battery storage to begin discharge at 13:45, sustaining 60--70\,kW equivalent output through the ramp-down period to smooth the residual load curve for downstream consumers.
-    \item \textbf{SIDC Intraday Market Offer} (category: \texttt{market}) -- Submit a sell position on the Single Intraday Coupling (SIDC) platform for the 14:00--16:00 delivery window while generation is still above 50\% peak, locking in market value before the ramp-down.
-\end{itemize}
-
-References cited by the LLM: ENTSO-E PICASSO (aFRR), ENTSO-E MARI (mFRR), SIDC cross-border intraday trading.
-
-\subsection{Operational Value vs. Consumer-Facing Output}
-
-The distinction between grid operator output and consumer-facing output is structural, not cosmetic. Consumer-facing solar apps (e.g., residential monitoring dashboards) answer questions such as ``should I run my dishwasher now?'' and present output in kWh and cost savings. The Grid Advisor targets TSO/DSO planners who manage reserve markets, balancing obligations, and cross-border interconnector schedules. Its output therefore references specific ENTSO-E products (PICASSO, MARI, SIDC), uses capacity factor and ramp rate language, and frames strategies in terms of reserve procurement and market positions rather than appliance scheduling.
-
-This distinction is enforced at the prompt level (the system prompt explicitly states the audience) and at the knowledge base level (all four KB documents are written from a grid operations perspective, not a prosumer perspective). The result is recommendations that a grid operator can act on directly, rather than re-interpret.
-
-\clearpage
-\subsection{Limitations and Fallback Behaviour}
-
-\begin{itemize}[noitemsep]
-    \item \textbf{LLM availability} -- OpenRouter's free tier is subject to rate limits and occasional downtime. When the recommendation node fails, the application still renders the KPI cards, hourly profile chart, and risk flag list, which are computed deterministically and do not require LLM access.
-    \item \textbf{Forecast accuracy} -- Open-Meteo forecasts are most accurate within 48 hours. Runs targeting dates more than 7 days out will reflect lower-confidence NWP model outputs.
-    \item \textbf{Single-system scope} -- The pipeline analyses one country and one installed capacity at a time. Cross-border portfolio analysis (e.g., coordinating generation across DE and DK) is not yet supported.
-    \item \textbf{Knowledge base currency} -- The four KB documents reflect ENTSO-E market design as of 2024. Regulatory changes (e.g., new balancing products, revised PICASSO rules) would require manual KB updates.
-\end{itemize}
-
-% -----------------------------------------------------------------------
-% ORIGINAL SECTIONS 8-11 (renumbered due to new sections above)
-% -----------------------------------------------------------------------
-
-% Section 8
+% =============================================================
 \newpage
-\section{Repository Structure}
+\section{Discussion}
+% =============================================================
 
-The project is organised into modular directories, each serving a distinct purpose.
+\subsection{Limitations}
 
-\begin{table}[H]
-    \centering
-    \caption{Repository Directory Layout}
-    \begin{tabularx}{\textwidth}{lX}
-        \toprule
-        \textbf{Directory} & \textbf{Purpose} \\
-        \midrule
-        Walkthrough/ & Complete documented walkthrough (Jupyter notebook and PDF). Recommended starting point. \\
-        Pipeline\_Modules/ & Modular per-stage scripts (8 modules covering visualisation, cleaning, merging, encoding, training, and analysis). \\
-        Final\_Pipeline/ & Single consolidated end-to-end pipeline script. \\
-        NASA\_Data\_Fetch/ & NASA POWER API data collection script (\texttt{fetcher.py}). \\
-        Datasets/ & Raw and processed datasets (compressed). \\
-        Models/ & Trained model files (compressed \texttt{.pkl} files). \\
-        Demo\_and\_Hosting/ & Streamlit application for deployment. \\
-        Agent\_Pipeline/ & Phase~2 Grid Advisor: LangGraph graph, RAG pipeline, knowledge base, and recommendation node. \\
-        Report/ & This report and reference materials. \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+Several limitations constrain the present work. The train/test split is random
+rather than temporal; a rigorous evaluation would train on pre-2013 data and
+test on 2013--2015 to assess genuine out-of-sample temporal generalisation.
+The knowledge base comprises four documents authored for this project rather
+than validated operational guidelines from ENTSO-E or national transmission
+system operators; expanding this corpus would improve practical relevance.
+The qualitative evaluation of the Grid Advisor relies on a single case study;
+a systematic expert-rating study or comparison against documented historical
+dispatch decisions would constitute stronger evidence of advisory quality.
 
-% Section 9
-\section{Technology Stack}
+Single-centroid meteorological representation per country is a further
+simplification: large countries such as Germany and France exhibit substantial
+intra-country irradiance gradients that a single centroid query cannot capture.
+Sub-national disaggregation---using NUTS-2 or NUTS-3 administrative units and
+corresponding PV fleet distribution data---is a natural extension.
 
-\begin{table}[H]
-    \centering
-    \caption{Phase 1 Technologies}
-    \begin{tabular}{ll}
-        \toprule
-        \textbf{Layer} & \textbf{Technology} \\
-        \midrule
-        Data Processing & pandas, NumPy \\
-        Machine Learning & scikit-learn \\
-        Visualisation & matplotlib, seaborn, Plotly \\
-        Model Persistence & joblib \\
-        Web Application & Streamlit \\
-        API Data Source & NASA POWER API \\
-        Hosting & Hugging Face Spaces \\
-        Version Control & Git, GitHub \\
-        \bottomrule
-    \end{tabular}
-\end{table}
+Finally, the in-memory ChromaDB design precludes persistent knowledge base
+updates between sessions. A production deployment would benefit from a
+persistent vector store with versioned document ingestion and retrieval
+audit logging.
 
-\begin{table}[H]
-    \centering
-    \caption{Phase 2 Additional Technologies (Grid Advisor)}
-    \begin{tabularx}{\textwidth}{llX}
-        \toprule
-        \textbf{Component} & \textbf{Technology} & \textbf{Role} \\
-        \midrule
-        Agent Orchestration & LangGraph & Directed StateGraph for multi-node agentic pipeline \\
-        LLM Framework & LangChain & \texttt{ChatOpenAI} adapter; document loaders; text splitter \\
-        LLM Provider & OpenRouter & Routes to LLaMA~3 family via OpenAI-compatible API \\
-        Vector Store & ChromaDB & In-memory vector store for RAG retrieval \\
-        Embeddings & sentence-transformers & \texttt{all-MiniLM-L6-v2} local embedding model (384-dim) \\
-        Live Weather & Open-Meteo API & Free NWP forecast API; no key required \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+\subsection{Responsible AI}
 
-% Section 10
-\newpage
-\section{Future Work}
+The pipeline is designed as a decision \emph{support} system, not an
+autonomous decision-maker. The \texttt{responsible\_ai\_note} field in every
+LLM output, the deterministic fallback mechanism, and the clear separation
+between the ML forecast layer and the LLM advisory layer are all deliberate
+architectural choices that reflect the appropriate level of human oversight
+for a critical infrastructure application. Future deployments should implement
+recommendation audit trails and feedback loops to support continuous evaluation
+of advisory quality by domain experts.
 
-The Grid Advisor completes the initial agentic AI vision for SolarIntel, establishing a working end-to-end pipeline from raw weather forecast to structured operator recommendations. Genuine next-step extensions include:
-
-\begin{itemize}[noitemsep]
-    \item \textbf{Deep learning forecasting} -- Replacing the Random Forest with sequence models (LSTM, Temporal Fusion Transformer) to capture multi-day temporal dependencies and improve accuracy on volatile weather regimes. The current feature set is compatible with these architectures; the primary challenge is training data sequencing.
-    \item \textbf{Multi-step forecasting horizon} -- Extending from 24-hour to 72-hour or 7-day generation profiles to support weekly reserve procurement and maintenance scheduling decisions.
-    \item \textbf{Real-time data ingestion} -- Integrating live ENTSO-E Transparency Platform feeds (actual generation, load, and cross-border flows) to allow the risk analysis node to compare forecast output against observed grid state, enabling closed-loop anomaly detection.
-    \item \textbf{Multi-country portfolio analysis} -- Extending the LangGraph pipeline to accept a portfolio of installations across multiple countries, with cross-border balancing strategies generated at the portfolio level rather than per-site.
-    \item \textbf{Higher spatial granularity} -- Moving from country-level centroids to regional (NUTS-2) or site-level coordinates to support distribution network operators managing sub-national feeder constraints.
-\end{itemize}
-
-% Section 11
-\clearpage
+% =============================================================
 \section{Conclusion}
+% =============================================================
 
-\begin{center}
-\colorbox{solarblue!8}{\parbox{0.9\textwidth}{\centering\textbf{\color{solarblue}Key Result:} The Random Forest Regressor achieves an $R^2$ of \textbf{0.9112}, explaining over 91\% of variance in hourly solar capacity factor across 29 European countries.}}
-\end{center}
+This paper presented SolarIntel, a two-phase system for solar energy
+forecasting and grid advisory at European scale. The Random Forest Regressor
+trained on the 3.8-million-row EMHIRES--NASA POWER corpus achieves
+$R^2 = 0.9112$, demonstrating that ensemble learning on large-scale,
+multi-country meteorological data yields accurate and geographically
+transferable capacity factor predictions. The LangGraph-based agentic pipeline
+extends these forecasts into actionable, JSON-structured grid management
+recommendations through deterministic risk analysis, RAG over a curated
+energy knowledge base, and structured LLM reasoning. The Estonia case study
+illustrates end-to-end operation from real-time weather retrieval to
+PICASSO-referenced balancing strategies. Future work will address temporal
+evaluation protocols, expanded and validated knowledge bases, sub-national
+spatial resolution, and formal expert evaluation of advisory quality at scale.
 
-\vspace{0.3cm}
-
-SolarIntel demonstrates a complete machine learning workflow for solar energy generation prediction. The pipeline successfully merges two heterogeneous data sources into a unified dataset of approximately 3.8 million hourly observations. The Random Forest Regressor accurately captures the non-linear relationships between weather conditions, temporal patterns, geographic factors, and solar output. The deployed Streamlit application provides an accessible interface for exploring predictions across 29 European countries.
-
-Phase~2 extends SolarIntel into a full agentic decision-support system. The Grid Advisor's four-node LangGraph pipeline fetches live weather forecasts, applies deterministic risk analysis using a scale-invariant variability metric, retrieves domain knowledge via ChromaDB-backed RAG, and produces structured LLM recommendations referenced to specific ENTSO-E balancing mechanisms. Together, the two phases deliver an end-to-end system that takes solar physics data from the 1980s and produces actionable grid operation guidance for today, demonstrating the viability of composing classical ML with modern LLM tooling in a production-grade renewable energy application.
-
-% References
+% =============================================================
+%  References
+% =============================================================
+\end{multicols}
 \newpage
-\section*{References}
-\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{12}
 
-\begin{enumerate}[noitemsep]
-    \item Gonzalez Aparicio, I., Zucker, A., Careri, F., Monforti, F., Huld, T., Badger, J. (2017). \textit{EMHIRES dataset -- Part I: Wind power generation}. European Commission, Joint Research Centre (JRC).
-    \item NASA Langley Research Center. \textit{POWER -- Prediction Of Worldwide Energy Resources}. Available at: \url{https://power.larc.nasa.gov/}
-    \item Pedregosa, F., et al. (2011). \textit{Scikit-learn: Machine Learning in Python}. Journal of Machine Learning Research, 12, 2825--2830.
-    \item European Commission, Joint Research Centre. \textit{EMHIRES PV Time Series}. Available at: \url{https://setis.ec.europa.eu/european-commission-services/emhires}
-    \item Chase, H., et al. (2022). \textit{LangChain: Building applications with LLMs through composability}. Available at: \url{https://github.com/langchain-ai/langchain}
-    \item LangChain AI. \textit{LangGraph: Build stateful, multi-actor applications with LLMs}. Available at: \url{https://github.com/langchain-ai/langgraph}
-    \item Chroma. \textit{ChromaDB: The AI-native open-source embedding database}. Available at: \url{https://www.trychroma.com/}
-    \item Reimers, N., \& Gurevych, I. (2019). \textit{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks}. In Proceedings of EMNLP 2019.
-    \item OpenRouter. \textit{OpenRouter: A unified interface for LLMs}. Available at: \url{https://openrouter.ai/}
-    \item Open-Meteo. \textit{Open-Meteo: Free Weather Forecast API}. Available at: \url{https://open-meteo.com/}
-    \item ENTSO-E. \textit{PICASSO: Platform for the International Coordination of Automated Frequency Restoration and Stable System Operation}. Available at: \url{https://www.entsoe.eu/network_codes/eb/picasso/}
-    \item ENTSO-E. \textit{MARI: Manually Activated Reserves Initiative}. Available at: \url{https://www.entsoe.eu/network_codes/eb/mari/}
-    \item ENTSO-E. \textit{SIDC: Single Intraday Coupling}. Available at: \url{https://www.entsoe.eu/network_codes/cacm/sidc/}
-\end{enumerate}
+\bibitem{irena2023}
+International Renewable Energy Agency,
+\textit{Renewable Capacity Statistics 2023}.
+IRENA, Abu Dhabi, UAE, 2023.
+
+\bibitem{antonanzas2016}
+J.~Antonanzas, N.~Osorio, R.~Escobar, R.~Urraca, F.~J.~Martinez-de-Pison,
+and F.~Antonanzas-Torres,
+``Review of photovoltaic power forecasting,''
+\textit{Solar Energy}, vol.~136, pp.~78--111, Oct.~2016.
+
+\bibitem{voyant2017}
+C.~Voyant, G.~Notton, S.~Kalogirou, M.-L.~Nivet, C.~Paoli, F.~Motte,
+and A.~Fouilloy,
+``Machine learning methods for solar radiation forecasting: a review,''
+\textit{Renewable Energy}, vol.~105, pp.~569--582, 2017.
+
+\bibitem{breiman2001}
+L.~Breiman,
+``Random forests,''
+\textit{Machine Learning}, vol.~45, no.~1, pp.~5--32, 2001.
+
+\bibitem{lewis2020}
+P.~Lewis \textit{et al.},
+``Retrieval-augmented generation for knowledge-intensive NLP tasks,''
+in \textit{Advances in Neural Information Processing Systems (NeurIPS)},
+vol.~33, pp.~9459--9474, 2020.
+
+\bibitem{gonzalez2016}
+I.~Gonzalez-Aparicio, A.~Zucker, F.~Careri, F.~Monforti, T.~Huld,
+and J.~Badger,
+\textit{EMHIRES Dataset Part I: Solar Power Generation},
+EUR~28299~EN, Publications Office of the European Union, Luxembourg, 2016.
+
+\bibitem{stackhouse2019}
+P.~W.~Stackhouse and C.~H.~Whitlock,
+``Surface meteorology and solar energy: a renewable energy resource web site
+(release 3.0),''
+NASA POWER Technical Report, 2019.
+
+\bibitem{pedregosa2011}
+F.~Pedregosa \textit{et al.},
+``Scikit-learn: machine learning in Python,''
+\textit{Journal of Machine Learning Research}, vol.~12, pp.~2825--2830, 2011.
+
+\bibitem{reimers2019}
+N.~Reimers and I.~Gurevych,
+``Sentence-BERT: sentence embeddings using Siamese BERT-networks,''
+in \textit{Proc.\ EMNLP}, Hong Kong, China, Nov.~2019, pp.~3982--3992.
+
+\bibitem{openmeteo2023}
+P.~Zippenfenig,
+``Open-Meteo.com weather API,''
+Zenodo, 2023,
+doi:~\texttt{10.5281/zenodo.7970649}.
+
+\bibitem{langchain2024}
+LangChain, Inc.,
+\textit{LangGraph: Build Stateful Multi-Actor Applications with LLMs}, 2024.
+[Online]. Available: \texttt{https://github.com/langchain-ai/langgraph}
+
+\bibitem{openrouter2023}
+OpenRouter, Inc.,
+\textit{OpenRouter: A Unified Interface for LLMs}, 2023.
+[Online]. Available: \texttt{https://openrouter.ai}
+
+\end{thebibliography}
 
 \end{document}

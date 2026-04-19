@@ -48,7 +48,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\small\textit{SolarIntel}}
-\fancyhead[R]{\small\textit{Solar Energy Generation Prediction}}
+\fancyhead[R]{\small\textit{ML and Agentic AI for Solar Energy Forecasting}}
 \fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 
@@ -64,7 +64,7 @@
     \vspace*{1.5cm}
 
     {\huge\bfseries\color{solarblue} SolarIntel}\\[0.6cm]
-    {\Large\color{solaramber} Solar Energy Generation Prediction}\\[0.3cm]
+    {\Large\color{solaramber} Machine Learning and Agentic AI for Solar Energy Forecasting and Grid Optimisation Across European Markets}\\[0.3cm]
     {\large Using EMHIRES and NASA POWER Data}\\[0.4cm]
     \rule{\linewidth}{1.5pt}\\[0.8cm]
 
@@ -99,7 +99,7 @@
 % Abstract
 \begin{abstract}
 \noindent
-Accurate forecasting of solar energy generation is essential for grid balancing, energy market operations, and renewable infrastructure planning across Europe. This report presents \textbf{SolarIntel}, an end-to-end machine learning system that predicts hourly solar capacity factors for 29 European countries by fusing 15 years of photovoltaic generation data from the European Commission's EMHIRES dataset with satellite-derived meteorological observations from NASA's POWER API. The resulting dataset comprises approximately 3.8 million hourly records and 34 features. Two regression models are trained and evaluated: a Linear Regression baseline ($R^2 = 0.788$) and a Random Forest Regressor ($R^2 = 0.911$). The superior model is deployed through an interactive Streamlit web application hosted on Hugging Face Spaces, enabling real-time prediction, 24-hour generation profiling, and cross-country comparison. Building on this ML foundation, Phase~2 introduces an Agentic AI Grid Advisor: a LangGraph-based multi-agent pipeline that fetches live weather forecasts, performs deterministic risk analysis, retrieves expert knowledge via Retrieval-Augmented Generation (RAG), and generates structured LLM recommendations tailored to grid operators and transmission system planners.
+Accurate forecasting of solar energy generation is essential for grid balancing, energy market operations, and renewable infrastructure planning across Europe. This report presents \textbf{SolarIntel}, an end-to-end machine learning system that predicts hourly solar capacity factors for 29 European countries by fusing 15 years of photovoltaic generation data from the European Commission's EMHIRES dataset with satellite-derived meteorological observations from NASA's POWER API. The resulting dataset comprises approximately 3.8 million hourly records and 34 features. Two regression models are trained and evaluated: a Linear Regression baseline ($R^2 = 0.7880$) and a Random Forest Regressor ($R^2 = 0.9112$). The superior model is deployed through an interactive Streamlit web application hosted on Hugging Face Spaces, enabling real-time prediction, 24-hour generation profiling, and cross-country comparison. Building on this ML foundation, Phase~2 introduces an Agentic AI Grid Advisor: a LangGraph-based multi-agent pipeline that fetches live weather forecasts, performs deterministic risk analysis, retrieves expert knowledge via Retrieval-Augmented Generation (RAG), and generates structured LLM recommendations tailored to grid operators and transmission system planners.
 \end{abstract}
 
 % Main matter — arabic numerals, restart from 1
