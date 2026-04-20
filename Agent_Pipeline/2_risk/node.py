@@ -27,7 +27,7 @@ def risk_analysis_node(state: GridAdvisorState) -> dict:
     if ramp_events:
         risk_flags.append(f"High variability window: hours {ramp_events[0]}-{ramp_events[-1]}")
     if low_hours:
-        risk_flags.append(f"Minimal generation risk: {len(low_hours)} hours below 5% capacity")
+        risk_flags.append(f"Minimal generation risk: {len(low_hours)} hours below 10% capacity")
     if variability_score < 0.05:
         risk_flags.append("Low variability day - stable but low output expected")
 
